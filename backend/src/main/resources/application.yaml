@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: qr-food-ordering
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/${DB_NAME:gomoku_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Hop2005@}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 6000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID:943352489570-toir1d7gcuvlobalmdt9jrhu6ahv9vej.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            redirect-uri: "${GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}"
+            scope: profile, email
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+    jwt:
+      secret-key: TaqlmGv1iEDMRiFp/pHuID1+T84IK23DF2KJDBf43sdf24ds2fuA0xXh4GhiUI=
+      access-expiration: 3600
+      refresh-expiration: 86400

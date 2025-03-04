@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  qr-food-ordering-app:
+    container_name: qr-food-ordering-app
+    build: ../
+    depends_on:
+      - qr-food-ordering-redis
+      - qr-food-ordering-mysql
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=qr-food-ordering-redis
+      - REDIS_PORT=6379
+      - DB_HOST=qr-food-ordering-mysql
+      - DB_PORT=3306
+      - DB_NAME=qr-food-ordering_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=Hop2005@
+    networks:
+      - qr-food-ordering-network
+
+  qr-food-ordering-redis:
+    container_name: qr-food-ordering-redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - qr-food-ordering-redis-data:/data
+    networks:
+      - qr-food-ordering-network
+
+#  docker exec -it qr-food-ordering-redis redis-cli
+
+  qr-food-ordering-mysql:
+    container_name: qr-food-ordering-mysql
+    image: mysql:8.2.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Hop2005@
+      MYSQL_DATABASE: qr-food-ordering_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - qr-food-ordering-mysql-data:/var/lib/mysql
+    networks:
+      - qr-food-ordering-network
+
+volumes:
+  qr-food-ordering-redis-data:
+  qr-food-ordering-mysql-data:
+
+networks:
+  qr-food-ordering-network:
+    driver: bridge
+
+# docker compose up -d qr-food-ordering-app

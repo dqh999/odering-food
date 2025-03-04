@@ -60,7 +60,7 @@ export function useMenu() {
         setSelectedCategory(category)
         const element = document.getElementById(`category-${category}`)
         if (element) {
-            const yOffset = -100
+            const yOffset = -200
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
             window.scrollTo({ top: y, behavior: "smooth" })
         }

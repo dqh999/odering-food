@@ -6,25 +6,19 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  ArrowLeft,
-  ShoppingCart,
-  Plus,
-  Minus,
-  Search,
-  Coffee,
-  UtensilsCrossed,
-  Soup,
-  Cookie,
-  Beef,
-  ChefHat,
-  Sparkles,
-} from "lucide-react"
+import { ArrowLeft, ShoppingCart, Plus, Minus, Search, Coffee, UtensilsCrossed, Soup, Cookie, Beef, ChefHat, Sparkles, Globe } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { motion, AnimatePresence } from "framer-motion"
 import { useMenu } from "@/hooks/use-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useState } from "react"
 
 const categoryIcons: { [key: string]: React.ReactNode } = {
   "Main Dishes": <UtensilsCrossed className="h-6 w-6" />,
@@ -51,6 +45,8 @@ export default function MenuPage() {
     getItemQuantity,
   } = useMenu()
 
+  const [language, setLanguage] = useState("vi")
+
   return (
     <main className="w-full ">
       <div className="flex flex-col min-h-screen pb-16 w-full items-center" ref={menuRef}>
@@ -60,7 +56,7 @@ export default function MenuPage() {
             isScrolled && "bg-background/80 shadow-sm",
           )}
         >
-          <div className="container flex items-center justify-between py-4 w-full">
+          <div className="container flex items-center justify-between py-4 w-full px-4">
             <div className="flex items-center">
               <Link href="/">
                 <Button variant="ghost" size="icon">
@@ -73,19 +69,38 @@ export default function MenuPage() {
               </Badge>
             </div>
 
-            <Link href="/cart">
-              <Button variant="outline" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {cartItemCount > 0 && (
-                  <Badge
-                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
-                    variant="default"
-                  >
-                    {cartItemCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 gap-1">
+                    <Globe className="h-4 w-4" />
+                    <span>{language === "vi" ? "Tiếng Việt" : "English"}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setLanguage("vi")}>
+                    🇻🇳 Tiếng Việt
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage("en")}>
+                    🇬🇧 English
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Link href="/order/cart">
+                <Button variant="outline" size="icon" className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartItemCount > 0 && (
+                    <Badge
+                      className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                      variant="default"
+                    >
+                      {cartItemCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="container py-2">
@@ -265,4 +280,3 @@ export default function MenuPage() {
     </main>
   )
 }
-

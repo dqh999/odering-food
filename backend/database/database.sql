@@ -1,124 +1,131 @@
-CREATE TABLE Users
+create table users
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name       VARCHAR(255) NOT NULL,
-    email      VARCHAR(255) UNIQUE,
-    phone      VARCHAR(20) UNIQUE,
-    password   VARCHAR(255) NOT NULL,
-    role       ENUM('customer', 'owner', 'staff') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id         varchar(45) primary key,
+    role       varchar(20)  not null, -- 'customer', 'owner', 'staff'
+    provider_name    varchar(50),
+    provider_user_id varchar(255),
+    full_name       varchar(255) not null,
+    avatar_url       text,
+    email      varchar(255) UNIQUE,
+    phone      varchar(20) UNIQUE,
+    password   varchar(255),
+    created_at timestamp,
+    updated_at timestamp
 );
 
-CREATE TABLE Stores
+create table brands
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    owner_id   BIGINT       NOT NULL,
-    name       VARCHAR(255) NOT NULL,
-    address    TEXT         NOT NULL,
-    phone      VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (owner_id) REFERENCES Users (id) ON DELETE CASCADE
+    id         varchar(45) primary key,
+    name       varchar(255) not null UNIQUE,
+    owner_id   varchar(45)       not null,
+    created_at timestamp,
+    updated_at timestamp
 );
 
-CREATE TABLE Tables
+create table stores
 (
-    id           BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_id     BIGINT      NOT NULL,
-    table_number VARCHAR(20) NOT NULL,
-    status       ENUM('available', 'occupied') DEFAULT 'available',
-    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE
+    id         varchar(45) primary key,
+    brand_id   varchar(45)       not null,
+    name       varchar(255) not null,
+    address    TEXT         not null,
+    phone      varchar(20),
+    created_at timestamp,
+    updated_at timestamp
 );
 
-CREATE TABLE QR_Codes
+create table store_staff
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    table_id   BIGINT NOT NULL,
-    qr_code    TEXT   NOT NULL, -- Lưu đường link hoặc mã QR
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (table_id) REFERENCES Tables (id) ON DELETE CASCADE
+    id         varchar(45) primary key,
+    store_id   varchar(45)      not null,
+    user_id    varchar(45)      not null,
+    role       varchar(20) not null, -- 'waiter', 'chef', 'cashier', 'manager'
+    created_at timestamp,
+    updated_at timestamp
 );
 
-CREATE TABLE Categories
+create table tables
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_id   BIGINT       NOT NULL,
-    name       VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE
+    id           varchar(45) primary key,
+    store_id     varchar(45)      not null,
+    table_number varchar(20) not null,
+    status       varchar(20) DEFAULT 'available', -- 'available', 'occupied'
+    created_at   timestamp,
+    updated_at   timestamp
 );
 
-CREATE TABLE Menu_Items
+create table qr_codes
 (
-    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_id    BIGINT         NOT NULL,
-    category_id BIGINT         NOT NULL,
-    name        VARCHAR(255)   NOT NULL,
+    id         varchar(45) primary key,
+    table_id   varchar(45) not null,
+    qr_code    TEXT   not null, -- Lưu đường link hoặc mã QR
+    url        TEXT,
+    created_at timestamp,
+    updated_at timestamp
+);
+
+create table categories
+(
+    id         varchar(45) primary key,
+    name       varchar(255) not null,
+    created_at timestamp,
+    updated_at timestamp
+);
+
+create table menu_items
+(
+    id          varchar(45) primary key,
+    store_id    varchar(45)         not null,
+    category_id varchar(45)         not null,
+    name        varchar(255)   not null,
     description TEXT,
-    price       DECIMAL(10, 2) NOT NULL,
-    image_url   VARCHAR(500),
+    price       DECIMAL(10, 2) not null,
+    image_url   varchar(500),
     available   BOOLEAN   DEFAULT TRUE,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES Categories (id) ON DELETE CASCADE
+    created_at  timestamp,
+    updated_at  timestamp
 );
 
-CREATE TABLE Orders
+create table orders
 (
-    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_id    BIGINT         NOT NULL,
-    table_id    BIGINT         NOT NULL,
-    user_id     BIGINT, -- Có thể null nếu khách không đăng nhập
-    status      ENUM('pending', 'preparing', 'completed', 'cancelled') DEFAULT 'pending',
-    total_price DECIMAL(10, 2) NOT NULL,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE,
-    FOREIGN KEY (table_id) REFERENCES Tables (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE SET NULL
+    id          varchar(45) primary key,
+    store_id    varchar(45)         not null,
+    table_id    varchar(45)         not null,
+    user_id     varchar(45),                        -- Có thể null nếu khách không đăng nhập
+    status      varchar(20) DEFAULT 'pending', -- 'pending', 'preparing', 'completed', 'cancelled'
+    total_price DECIMAL(10, 2) not null,
+    created_at  timestamp,
+    updated_at  timestamp
 );
 
-CREATE TABLE Order_Items
+create table order_items
 (
-    id           BIGINT PRIMARY KEY AUTO_INCREMENT,
-    order_id     BIGINT         NOT NULL,
-    menu_item_id BIGINT         NOT NULL,
-    quantity     INT            NOT NULL,
-    price        DECIMAL(10, 2) NOT NULL,
-    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES Orders (id) ON DELETE CASCADE,
-    FOREIGN KEY (menu_item_id) REFERENCES Menu_Items (id) ON DELETE CASCADE
+    id           varchar(45) primary key,
+    order_id     varchar(45)         not null,
+    menu_item_id varchar(45)         not null,
+    quantity     INT            not null,
+    price        DECIMAL(10, 2) not null,
+    created_at   timestamp,
+    updated_at   timestamp
 );
 
-CREATE TABLE Payments
+create table payments
 (
-    id             BIGINT PRIMARY KEY AUTO_INCREMENT,
-    order_id       BIGINT NOT NULL,
-    payment_method ENUM('cash', 'credit_card', 'momo', 'vn_pay') NOT NULL,
-    status         ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
-    paid_at        TIMESTAMP NULL,
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES Orders (id) ON DELETE CASCADE
+    id             varchar(45) primary key,
+    order_id       varchar(45)      not null,
+    payment_method varchar(20) not null,          -- 'cash', 'credit_card', 'momo', 'vn_pay'
+    status         varchar(20) DEFAULT 'pending', -- 'pending', 'paid', 'failed'
+    paid_at        timestamp NULL,
+    created_at     timestamp,
+    updated_at     timestamp
 );
 
-CREATE TABLE Reviews
+create table reviews
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id    BIGINT NOT NULL,
-    store_id   BIGINT NOT NULL,
+    id         varchar(45) primary key,
+    user_id    varchar(45) not null,
+    store_id   varchar(45) not null,
     rating     INT CHECK (rating BETWEEN 1 AND 5),
     comment    TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE
-);
-
-CREATE TABLE Store_Staff
-(
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_id   BIGINT NOT NULL,
-    user_id    BIGINT NOT NULL,
-    role       ENUM('waiter', 'chef', 'cashier', 'manager') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (store_id) REFERENCES Stores (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
+    created_at timestamp,
+    updated_at timestamp
 );

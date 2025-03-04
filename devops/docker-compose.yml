@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  scan-meally-app:
+    container_name: scan-meally-app
+    build: ../
+    depends_on:
+      - scan-meally-redis
+      - scan-meally-mysql
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=scan-meally-redis
+      - REDIS_PORT=6379
+      - DB_HOST=scan-meally-mysql
+      - DB_PORT=3306
+      - DB_NAME=scan-meally_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=Hop2005@
+    networks:
+      - scan-meally-network
+
+  scan-meally-redis:
+    container_name: scan-meally-redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - scan-meally-redis-data:/data
+    networks:
+      - scan-meally-network
+
+#  docker exec -it scan-meally-redis redis-cli
+
+  scan-meally-mysql:
+    container_name: scan-meally-mysql
+    image: mysql:8.2.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Hop2005@
+      MYSQL_DATABASE: scan-meally_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - scan-meally-mysql-data:/var/lib/mysql
+    networks:
+      - scan-meally-network
+
+volumes:
+  scan-meally-redis-data:
+  scan-meally-mysql-data:
+
+networks:
+  scan-meally-network:
+    driver: bridge
+
+# docker compose up -d scan-meally-app

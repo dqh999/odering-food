@@ -9,6 +9,7 @@ import java.time.OffsetDateTime;
 
 
 @Entity
+@Table(name = "store_staffs")
 @Getter
 @Setter
 public class StoreStaff extends BaseEntity {

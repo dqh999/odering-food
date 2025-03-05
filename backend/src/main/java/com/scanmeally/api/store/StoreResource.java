@@ -1,6 +1,11 @@
 package com.scanmeally.api.store;
 
+import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.store.dataTransferObject.StoreDTO;
+import com.scanmeally.domain.store.dataTransferObject.request.StoreRequest;
+import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
+import com.scanmeally.domain.store.dataTransferObject.response.StoreResponse;
 import com.scanmeally.domain.store.service.StoreService;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(value = "/api/stores", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/store", produces = MediaType.APPLICATION_JSON_VALUE)
 public class StoreResource {
 
     private final StoreService storeService;
@@ -22,31 +27,49 @@ public class StoreResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreDTO>> getAllStores() {
-        return ResponseEntity.ok(storeService.findAll());
+    public ResponseEntity<ApiResponse<PageResponse<StoreResponse>>> getAllStores(
+            @RequestParam String brandId,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
+    ) {
+        final var response = storeService.findAllByBrand(brandId,page, pageSize);
+        final PageResponse<StoreResponse> pageResponse = PageResponse.<StoreResponse>builder()
+                .totalElements((int) response.getTotalElements())
+                .totalPages(response.getTotalPages())
+                .currentPage(response.getNumber() + 1)
+                .pageSize(response.getSize())
+                .data(response.getContent())
+                .hasNext(response.hasNext())
+                .hasPrevious(response.hasPrevious())
+                .build();
+        return ApiResponse.<PageResponse<StoreResponse>>build().withData(pageResponse).toEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StoreDTO> getStore(@PathVariable(name = "id") final String id) {
-        return ResponseEntity.ok(storeService.get(id));
+    public ResponseEntity<ApiResponse<StoreResponse>> getStore(@PathVariable(name = "id") final String id) {
+        final var response = storeService.get(id);
+        return ApiResponse.<StoreResponse>build().withData(response).toEntity();
     }
 
-    @PostMapping
-    
-    public ResponseEntity<String> createStore(@RequestBody  final StoreDTO storeDTO) {
-        final String createdId = storeService.create(storeDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @PostMapping("/{brandId}")
+    public ResponseEntity<ApiResponse<StoreResponse>> createStore(
+            @PathVariable(name = "brandId") final String brandId,
+            @RequestBody  final StoreRequest request
+    ) {
+        final var response = storeService.create(brandId,request);
+        return ApiResponse.<StoreResponse>build().withData(response).toEntity();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateStore(@PathVariable(name = "id") final String id,
-            @RequestBody  final StoreDTO storeDTO) {
-        storeService.update(id, storeDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<ApiResponse<StoreResponse>> updateStore(
+            @PathVariable(name = "id") final String id,
+            @RequestBody  final StoreRequest request
+    ) {
+        final var response = storeService.update(id,request);
+        return ApiResponse.<StoreResponse>build().withData(response).toEntity();
     }
 
     @DeleteMapping("/{id}")
-    
     public ResponseEntity<Void> deleteStore(@PathVariable(name = "id") final String id) {
         storeService.delete(id);
         return ResponseEntity.noContent().build();

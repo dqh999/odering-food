@@ -1,67 +1,56 @@
 package com.scanmeally.domain.menu.service;
 
-import com.scan_meally.my_app.util.NotFoundException;
+import com.scanmeally.domain.menu.dataTransferObject.request.CategoryRequest;
+import com.scanmeally.domain.menu.dataTransferObject.request.CategoryUpdateRequest;
+import com.scanmeally.domain.menu.dataTransferObject.response.CategoryResponse;
+import com.scanmeally.domain.menu.mapper.CategoryMapper;
 import com.scanmeally.domain.menu.repository.CategoryRepository;
-import com.scanmeally.domain.menu.dataTransferObject.CategoryDTO;
 import com.scanmeally.domain.menu.model.Category;
+import com.scanmeally.infrastructure.exception.AppException;
+import com.scanmeally.infrastructure.exception.ResourceException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
-
+    private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(final CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+
+    public Page<CategoryResponse> findAll(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
+        final Page<Category> categories = categoryRepository.findAll(pageable);
+        return categories.map(categoryMapper::toResponse);
     }
 
-    public List<CategoryDTO> findAll() {
-        final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
-        return categories.stream()
-                .map(category -> mapToDTO(category, new CategoryDTO()))
-                .toList();
-    }
-
-    public CategoryDTO get(final String id) {
+    public CategoryResponse get(final String id) {
         return categoryRepository.findById(id)
-                .map(category -> mapToDTO(category, new CategoryDTO()))
+                .map(categoryMapper::toResponse)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
     }
 
-    public String create(final CategoryDTO categoryDTO) {
-        final Category category = new Category();
-        mapToEntity(categoryDTO, category);
-        return categoryRepository.save(category).getId();
+    public CategoryResponse create(final CategoryRequest request) {
+        final Category category = categoryMapper.create(request);
+        final Category savedEntity = categoryRepository.save(category);
+        return categoryMapper.toResponse(savedEntity);
     }
 
-    public void update(final String id, final CategoryDTO categoryDTO) {
+    public CategoryResponse update(final String id, final CategoryUpdateRequest request) {
         final Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
-        mapToEntity(categoryDTO, category);
-        categoryRepository.save(category);
+        categoryMapper.update(request, category);
+        final Category savedEntity = categoryRepository.save(category);
+        return categoryMapper.toResponse(savedEntity);
     }
 
     public void delete(final String id) {
         categoryRepository.deleteById(id);
-    }
-
-    private CategoryDTO mapToDTO(final Category category, final CategoryDTO categoryDTO) {
-        categoryDTO.setId(category.getId());
-        categoryDTO.setName(category.getName());
-        categoryDTO.setCreatedAt(category.getCreatedAt());
-        categoryDTO.setUpdatedAt(category.getUpdatedAt());
-        return categoryDTO;
-    }
-
-    private Category mapToEntity(final CategoryDTO categoryDTO, final Category category) {
-        category.setName(categoryDTO.getName());
-        category.setCreatedAt(categoryDTO.getCreatedAt());
-        category.setUpdatedAt(categoryDTO.getUpdatedAt());
-        return category;
     }
 
 }

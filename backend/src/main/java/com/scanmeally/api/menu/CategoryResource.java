@@ -1,18 +1,19 @@
 package com.scanmeally.api.menu;
 
-import com.scanmeally.domain.menu.dataTransferObject.CategoryDTO;
+import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.application.global.ApiResponse;
+import com.scanmeally.domain.menu.dataTransferObject.request.CategoryRequest;
+import com.scanmeally.domain.menu.dataTransferObject.request.CategoryUpdateRequest;
+import com.scanmeally.domain.menu.dataTransferObject.response.CategoryResponse;
 import com.scanmeally.domain.menu.service.CategoryService;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 @RestController
-@RequestMapping(value = "/api/categories", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/category", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CategoryResource {
 
     private final CategoryService categoryService;
@@ -22,31 +23,45 @@ public class CategoryResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getAllCategories(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
+    ) {
+        final var response = categoryService.findAll(page, pageSize);
+        final PageResponse<CategoryResponse> pageResponse = PageResponse.<CategoryResponse>builder()
+                .totalElements((int) response.getTotalElements())
+                .totalPages(response.getTotalPages())
+                .currentPage(response.getNumber() + 1)
+                .pageSize(response.getSize())
+                .data(response.getContent())
+                .hasNext(response.hasNext())
+                .hasPrevious(response.hasPrevious())
+                .build();
+        return ApiResponse.<PageResponse<CategoryResponse>>build().withData(pageResponse).toEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable(name = "id") final String id) {
-        return ResponseEntity.ok(categoryService.get(id));
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable(name = "id") final String id) {
+        final var response = categoryService.get(id);
+        return ApiResponse.<CategoryResponse>build().withData(response).toEntity();
     }
 
     @PostMapping
-    
-    public ResponseEntity<String> createCategory(@RequestBody  final CategoryDTO categoryDTO) {
-        final String createdId = categoryService.create(categoryDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@RequestBody final CategoryRequest request) {
+        final var response = categoryService.create(request);
+        return ApiResponse.<CategoryResponse>build().withData(response).toEntity();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable(name = "id") final String id,
-            @RequestBody  final CategoryDTO categoryDTO) {
-        categoryService.update(id, categoryDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
+            @PathVariable(name = "id") final String id,
+            @RequestBody final CategoryUpdateRequest request
+    ) {
+        final var response = categoryService.update(id, request);
+        return ApiResponse.<CategoryResponse>build().withData(response).toEntity();
     }
 
     @DeleteMapping("/{id}")
-    
     public ResponseEntity<Void> deleteCategory(@PathVariable(name = "id") final String id) {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();

@@ -9,6 +9,7 @@ import java.time.OffsetDateTime;
 
 
 @Entity
+@Table(name = "categories")
 @Getter
 @Setter
 public class Category  extends BaseEntity {
@@ -20,5 +21,5 @@ public class Category  extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
-
+    private String description;
 }

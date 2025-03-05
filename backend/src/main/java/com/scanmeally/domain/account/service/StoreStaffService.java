@@ -1,9 +1,10 @@
 package com.scanmeally.domain.account.service;
 
-import com.scan_meally.my_app.util.NotFoundException;
 import com.scanmeally.domain.account.dataTransferObject.StoreStaffDTO;
 import com.scanmeally.domain.account.model.StoreStaff;
 import com.scanmeally.domain.account.repository.StoreStaffRepository;
+import com.scanmeally.infrastructure.exception.AppException;
+import com.scanmeally.infrastructure.exception.ResourceException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -54,8 +55,6 @@ public class StoreStaffService {
         storeStaffDTO.setStoreId(storeStaff.getStoreId());
         storeStaffDTO.setUserId(storeStaff.getUserId());
         storeStaffDTO.setRole(storeStaff.getRole());
-        storeStaffDTO.setCreatedAt(storeStaff.getCreatedAt());
-        storeStaffDTO.setUpdatedAt(storeStaff.getUpdatedAt());
         return storeStaffDTO;
     }
 
@@ -63,8 +62,6 @@ public class StoreStaffService {
         storeStaff.setStoreId(storeStaffDTO.getStoreId());
         storeStaff.setUserId(storeStaffDTO.getUserId());
         storeStaff.setRole(storeStaffDTO.getRole());
-        storeStaff.setCreatedAt(storeStaffDTO.getCreatedAt());
-        storeStaff.setUpdatedAt(storeStaffDTO.getUpdatedAt());
         return storeStaff;
     }
 

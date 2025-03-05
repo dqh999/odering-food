@@ -1,6 +1,7 @@
 package com.scanmeally.infrastructure.config;
 
 import com.scanmeally.application.authentication.AuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -17,9 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthenticationFilter authenticationFilter;
 
-    public SecurityConfig(
-            @Lazy AuthenticationFilter authenticationFilter
-    ) {
+    @Autowired
+    public SecurityConfig(@Lazy AuthenticationFilter authenticationFilter) {
         this.authenticationFilter = authenticationFilter;
     }
 

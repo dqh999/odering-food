@@ -1,77 +1,90 @@
 package com.scanmeally.domain.order.service;
 
-import com.scan_meally.my_app.util.NotFoundException;
-import com.scanmeally.domain.order.dataTransferObject.OrderDTO;
+import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
+import com.scanmeally.domain.order.dataTransferObject.response.OrderResponse;
+import com.scanmeally.domain.order.mapper.OrderMapper;
+import com.scanmeally.domain.order.mapper.OrderItemMapper;
 import com.scanmeally.domain.order.model.Order;
+import com.scanmeally.domain.order.model.OrderItem;
 import com.scanmeally.domain.order.repository.OrderRepository;
+import com.scanmeally.domain.order.repository.OrderItemRepository;
 import com.scanmeally.infrastructure.exception.AppException;
 import com.scanmeally.infrastructure.exception.ResourceException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
 
-    public OrderService(final OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public Page<OrderResponse> findAllByStoreId(final String storeId, final int page, final int pageSize) {
+        Pageable pageable = PageRequest.of(page-1, pageSize, Sort.Direction.DESC, "id");
+        Page<Order> orders = orderRepository.findAllOrdersByStoreId(storeId,pageable);
+        return orders.map(orderMapper::toResponse);
     }
 
-    public List<OrderDTO> findAll() {
-        final List<Order> orders = orderRepository.findAll(Sort.by("id"));
-        return orders.stream()
-                .map(order -> mapToDTO(order, new OrderDTO()))
-                .toList();
-    }
-
-    public OrderDTO get(final String id) {
-        return orderRepository.findById(id)
-                .map(order -> mapToDTO(order, new OrderDTO()))
+    public OrderResponse get(final String id) {
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
+        return orderMapper.toResponse(order);
     }
 
-    public String create(final OrderDTO orderDTO) {
-        final Order order = new Order();
-        mapToEntity(orderDTO, order);
-        return orderRepository.save(order).getId();
+    @Transactional
+    public OrderResponse create(final OrderRequest orderRequest) {
+        // Lưu Order
+        Order order = orderMapper.toEntity(orderRequest);
+        Order savedOrder = orderRepository.save(order);
+
+        // Lưu danh sách OrderItem
+        List<OrderItem> orderItems = orderRequest.getItems().stream()
+                .map(itemRequest -> {
+                    OrderItem orderItem = orderItemMapper.toEntity(itemRequest);
+                    orderItem.setOrderId(savedOrder.getId());
+                    return orderItem;
+                }).toList();
+        orderItemRepository.saveAll(orderItems);
+
+        return orderMapper.toResponse(savedOrder);
     }
 
-    public void update(final String id, final OrderDTO orderDTO) {
-        final Order order = orderRepository.findById(id)
+    @Transactional
+    public OrderResponse update(final String id, final OrderRequest orderRequest) {
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
-        mapToEntity(orderDTO, order);
-        orderRepository.save(order);
+
+        // Cập nhật Order
+        order.setStoreId(orderRequest.getStoreId());
+        order.setTableId(orderRequest.getTableId());
+        order.setUserId(orderRequest.getUserId());
+        order.setTotalPrice(orderRequest.getTotalPrice());
+        Order updatedOrder = orderRepository.save(order);
+
+        // Xóa OrderItem cũ và thêm OrderItem mới
+        orderItemRepository.deleteByOrderId(id);
+        List<OrderItem> orderItems = orderRequest.getItems().stream()
+                .map(itemRequest -> {
+                    OrderItem orderItem = orderItemMapper.toEntity(itemRequest);
+                    orderItem.setOrderId(id);
+                    return orderItem;
+                }).toList();
+        orderItemRepository.saveAll(orderItems);
+        return orderMapper.toResponse(updatedOrder);
     }
 
     public void delete(final String id) {
+        orderItemRepository.deleteByOrderId(id);
         orderRepository.deleteById(id);
     }
-
-    private OrderDTO mapToDTO(final Order order, final OrderDTO orderDTO) {
-        orderDTO.setId(order.getId());
-        orderDTO.setStoreId(order.getStoreId());
-        orderDTO.setTableId(order.getTableId());
-        orderDTO.setUserId(order.getUserId());
-        orderDTO.setStatus(order.getStatus());
-        orderDTO.setTotalPrice(order.getTotalPrice());
-        orderDTO.setCreatedAt(order.getCreatedAt());
-        orderDTO.setUpdatedAt(order.getUpdatedAt());
-        return orderDTO;
-    }
-
-    private Order mapToEntity(final OrderDTO orderDTO, final Order order) {
-        order.setStoreId(orderDTO.getStoreId());
-        order.setTableId(orderDTO.getTableId());
-        order.setUserId(orderDTO.getUserId());
-        order.setStatus(orderDTO.getStatus());
-        order.setTotalPrice(orderDTO.getTotalPrice());
-        order.setCreatedAt(orderDTO.getCreatedAt());
-        order.setUpdatedAt(orderDTO.getUpdatedAt());
-        return order;
-    }
-
 }

@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @Builder

@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("com.nimbusds:nimbus-jose-jwt:9.1")
@@ -32,6 +33,9 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
+	implementation("org.mapstruct:mapstruct:1.6.3")
+	implementation("org.mapstruct:mapstruct-processor:1.6.3")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

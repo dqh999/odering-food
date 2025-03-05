@@ -1,18 +1,19 @@
 package com.scanmeally.api.store;
 
+import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.application.global.ApiResponse;
+import com.scanmeally.domain.store.dataTransferObject.request.BrandRequest;
+import com.scanmeally.domain.store.dataTransferObject.request.BrandUpdateRequest;
+import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
 import com.scanmeally.domain.store.service.BrandService;
-import com.scanmeally.domain.store.dataTransferObject.BrandDTO;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 @RestController
-@RequestMapping(value = "/api/brands", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/brand", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BrandResource {
 
     private final BrandService brandService;
@@ -22,31 +23,45 @@ public class BrandResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrandDTO>> getAllBrands() {
-        return ResponseEntity.ok(brandService.findAll());
+    public ResponseEntity<ApiResponse<PageResponse<BrandResponse>>> getAllBrands(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
+    ) {
+        final var response = brandService.findAll(page, pageSize);
+        final PageResponse<BrandResponse> pageResponse = PageResponse.<BrandResponse>builder()
+                .totalElements((int) response.getTotalElements())
+                .totalPages(response.getTotalPages())
+                .currentPage(response.getNumber() + 1)
+                .pageSize(response.getSize())
+                .data(response.getContent())
+                .hasNext(response.hasNext())
+                .hasPrevious(response.hasPrevious())
+                .build();
+        return ApiResponse.<PageResponse<BrandResponse>>build().withData(pageResponse).toEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BrandDTO> getBrand(@PathVariable(name = "id") final String id) {
-        return ResponseEntity.ok(brandService.get(id));
+    public ResponseEntity<ApiResponse<BrandResponse>> getBrand(@PathVariable(name = "id") final String id) {
+        final var response = brandService.get(id);
+        return ApiResponse.<BrandResponse>build().withData(response).toEntity();
     }
 
     @PostMapping
-    
-    public ResponseEntity<String> createBrand(@RequestBody  final BrandDTO brandDTO) {
-        final String createdId = brandService.create(brandDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<BrandResponse>> createBrand(@RequestBody final BrandRequest request) {
+        final var response = brandService.create(request);
+        return ApiResponse.<BrandResponse>build().withData(response).toEntity();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateBrand(@PathVariable(name = "id") final String id,
-            @RequestBody  final BrandDTO brandDTO) {
-        brandService.update(id, brandDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<ApiResponse<BrandResponse>> updateBrand(
+            @PathVariable(name = "id") final String id,
+            @RequestBody final BrandUpdateRequest request
+    ) {
+        final var response = brandService.update(id, request);
+        return ApiResponse.<BrandResponse>build().withData(response).toEntity();
     }
 
     @DeleteMapping("/{id}")
-    
     public ResponseEntity<Void> deleteBrand(@PathVariable(name = "id") final String id) {
         brandService.delete(id);
         return ResponseEntity.noContent().build();

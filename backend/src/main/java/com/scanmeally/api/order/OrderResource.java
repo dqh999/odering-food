@@ -1,53 +1,61 @@
 package com.scanmeally.api.order;
 
-import com.scanmeally.domain.order.dataTransferObject.OrderDTO;
+import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.application.global.ApiResponse;
+import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
+import com.scanmeally.domain.order.dataTransferObject.response.OrderResponse;
 import com.scanmeally.domain.order.service.OrderService;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @RestController
-@RequestMapping(value = "/api/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/api/order")
+@RequiredArgsConstructor
 public class OrderResource {
 
     private final OrderService orderService;
 
-    public OrderResource(final OrderService orderService) {
-        this.orderService = orderService;
-    }
-
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        return ResponseEntity.ok(orderService.findAll());
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrders(
+            @RequestParam(name = "storeId") String storeId,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
+    ) {
+        final var response = orderService.findAllByStoreId(storeId,page, pageSize);
+        final PageResponse<OrderResponse> pageResponse = PageResponse.<OrderResponse>builder()
+                .totalElements((int) response.getTotalElements())
+                .totalPages(response.getTotalPages())
+                .currentPage(response.getNumber() + 1)
+                .pageSize(response.getSize())
+                .data(response.getContent())
+                .hasNext(response.hasNext())
+                .hasPrevious(response.hasPrevious())
+                .build();
+        return ApiResponse.<PageResponse<OrderResponse>>build().withData(pageResponse).toEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable(name = "id") final String id) {
-        return ResponseEntity.ok(orderService.get(id));
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable String id) {
+        final var response = orderService.get(id);
+        return ApiResponse.<OrderResponse>build().withData(response).toEntity();
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrder(@RequestBody  final OrderDTO orderDTO) {
-        final String createdId = orderService.create(orderDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest orderRequest) {
+        final var response = orderService.create(orderRequest);
+        return ApiResponse.<OrderResponse>build().withData(response).toEntity();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateOrder(@PathVariable(name = "id") final String id,
-            @RequestBody  final OrderDTO orderDTO) {
-        orderService.update(id, orderDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<ApiResponse<OrderResponse>> updateOrder(@PathVariable String id, @RequestBody OrderRequest orderRequest) {
+        orderService.update(id, orderRequest);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable(name = "id") final String id) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

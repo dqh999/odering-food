@@ -1,69 +1,56 @@
 package com.scanmeally.domain.store.service;
 
-import com.scan_meally.my_app.util.NotFoundException;
-import com.scanmeally.domain.store.dataTransferObject.BrandDTO;
+import com.scanmeally.domain.store.dataTransferObject.request.BrandRequest;
+import com.scanmeally.domain.store.dataTransferObject.request.BrandUpdateRequest;
+import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
+import com.scanmeally.domain.store.mapper.BrandMapper;
 import com.scanmeally.domain.store.model.Brand;
 import com.scanmeally.domain.store.repository.BrandRepository;
+import com.scanmeally.infrastructure.exception.AppException;
+import com.scanmeally.infrastructure.exception.ResourceException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 
 @Service
+@RequiredArgsConstructor
 public class BrandService {
-
+    private final BrandMapper brandMapper;
     private final BrandRepository brandRepository;
 
-    public BrandService(final BrandRepository brandRepository) {
-        this.brandRepository = brandRepository;
+    public Page<BrandResponse> findAll(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page-1, pageSize, Sort.Direction.DESC, "id");
+        final Page<Brand> brands = brandRepository.findAll(pageable);
+        return brands.map(brandMapper::toResponse);
     }
 
-    public List<BrandDTO> findAll() {
-        final List<Brand> brands = brandRepository.findAll(Sort.by("id"));
-        return brands.stream()
-                .map(brand -> mapToDTO(brand, new BrandDTO()))
-                .toList();
-    }
-
-    public BrandDTO get(final String id) {
+    public BrandResponse get(final String id) {
         return brandRepository.findById(id)
-                .map(brand -> mapToDTO(brand, new BrandDTO()))
+                .map(brandMapper::toResponse)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
     }
 
-    public String create(final BrandDTO brandDTO) {
-        final Brand brand = new Brand();
-        mapToEntity(brandDTO, brand);
-        return brandRepository.save(brand).getId();
+    public BrandResponse create(final BrandRequest request) {
+        final Brand brand = brandMapper.toEntity(request);
+        Brand created = brandRepository.save(brand);
+        return brandMapper.toResponse(created);
     }
 
-    public void update(final String id, final BrandDTO brandDTO) {
+    public BrandResponse update(final String id, final BrandUpdateRequest request) {
         final Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
-        mapToEntity(brandDTO, brand);
-        brandRepository.save(brand);
+        brandMapper.update(request, brand);
+        Brand updated = brandRepository.save(brand);
+        return brandMapper.toResponse(updated);
     }
 
     public void delete(final String id) {
         brandRepository.deleteById(id);
     }
 
-    private BrandDTO mapToDTO(final Brand brand, final BrandDTO brandDTO) {
-        brandDTO.setId(brand.getId());
-        brandDTO.setName(brand.getName());
-        brandDTO.setOwnerId(brand.getOwnerId());
-        brandDTO.setCreatedAt(brand.getCreatedAt());
-        brandDTO.setUpdatedAt(brand.getUpdatedAt());
-        return brandDTO;
-    }
-
-    private Brand mapToEntity(final BrandDTO brandDTO, final Brand brand) {
-        brand.setName(brandDTO.getName());
-        brand.setOwnerId(brandDTO.getOwnerId());
-        brand.setCreatedAt(brandDTO.getCreatedAt());
-        brand.setUpdatedAt(brandDTO.getUpdatedAt());
-        return brand;
-    }
 
 }

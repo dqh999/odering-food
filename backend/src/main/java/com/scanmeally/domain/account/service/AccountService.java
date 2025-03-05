@@ -11,6 +11,7 @@ import com.scanmeally.domain.account.model.User;
 import com.scanmeally.domain.account.repository.UserRepository;
 import com.scanmeally.domain.account.service.impl.GoogleOAuth2ServiceImpl;
 import com.scanmeally.infrastructure.exception.AppException;
+import com.scanmeally.infrastructure.exception.ResourceException;
 import com.scanmeally.infrastructure.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -78,10 +79,10 @@ public class AccountService {
      */
     public AccountResponse refreshToken(String refreshToken) {
         var JWTClaimsSet = jwtTokenProvider.verifyToken(refreshToken);
-        if (JWTClaimsSet.isEmpty()) throw new AppException(AccountException.REFRESH_TOKEN_INVALID);
+        if (JWTClaimsSet.isEmpty()) throw new AppException(ResourceException.INVALID_PAYLOAD);
         String userId = JWTClaimsSet.get().getSubject();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(AccountException.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
         TokenMetadataDTO tokenMetadata = new TokenMetadataDTO(user.getId(), user.getFullName(), new Date());
         var token = jwtTokenProvider.generateTokens(tokenMetadata);
         return AccountResponse.of(user, token);
@@ -117,7 +118,7 @@ public class AccountService {
         var userDetailDTO = cacheService.get(USER_CACHE_KEY + userDetails.getUsername(), UserDetailDTO.class);
         if (userDetailDTO.isPresent()) return userDetailDTO.get();
         User existingUser = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new AppException(AccountException.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
         return new UserDetailDTO(existingUser.getId(), existingUser.getRole().name(), existingUser.getFullName());
     }
 }

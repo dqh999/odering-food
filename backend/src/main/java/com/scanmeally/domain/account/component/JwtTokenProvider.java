@@ -9,6 +9,7 @@ import com.scanmeally.domain.account.dataTransferObject.TokenDTO;
 import com.scanmeally.domain.account.dataTransferObject.TokenMetadataDTO;
 import com.scanmeally.domain.account.exception.AccountException;
 import com.scanmeally.infrastructure.exception.AppException;
+import com.scanmeally.infrastructure.exception.ResourceException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,10 @@ public class JwtTokenProvider {
     private String secretKey;
 
     @Value("${spring.security.jwt.access-expiration}")
-    private String accessTokenExpiration;
+    private long accessTokenExpiration;
 
     @Value("${spring.security.jwt.refresh-expiration}")
-    private String refreshTokenExpiration;
+    private long refreshTokenExpiration;
 
     private static final String CLAIM_USER_ID = "user_id";
 
@@ -62,7 +63,7 @@ public class JwtTokenProvider {
             jwsObject.sign(new MACSigner(secretKey));
             return jwsObject.serialize();
         } catch (JOSEException e) {
-            throw new AppException(AccountException.UNEXPECTED_ERROR);
+            throw new AppException(ResourceException.UNEXPECTED_ERROR);
         }
     }
 
@@ -84,7 +85,7 @@ public class JwtTokenProvider {
 
             return Optional.of(claims);
         } catch (ParseException | JOSEException e) {
-            throw new AppException(AccountException.UNEXPECTED_ERROR);
+            throw new AppException(ResourceException.UNEXPECTED_ERROR);
         }
     }
 }

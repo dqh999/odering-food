@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 
 
 @Entity
+@Table(name = "menu_items")
 @Getter
 @Setter
 public class MenuItem  extends BaseEntity {
@@ -28,14 +29,14 @@ public class MenuItem  extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "\"description\"", columnDefinition = "Stringtext")
+    @Column(name = "description")
     private String description;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Column(length = 500)
-    private String imageUrl;
+    @Column(name = "image_url", length = 500)
+    private String imageURL;
 
     @Column(columnDefinition = "tinyint", length = 1)
     private Boolean available;

@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
-
 
 @Entity
-@Table(name = "categories")
+@Table(name = "brand_categories")
 @Getter
 @Setter
 public class Category  extends BaseEntity {
@@ -18,7 +16,8 @@ public class Category  extends BaseEntity {
     @Column(nullable = false, updatable = false,length = 45)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
+    @Column(name = "brand_id")
+    private String brandId;
     @Column(nullable = false)
     private String name;
     private String description;

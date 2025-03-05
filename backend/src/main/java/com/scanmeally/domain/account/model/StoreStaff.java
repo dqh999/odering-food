@@ -19,13 +19,13 @@ public class StoreStaff extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "store_id", nullable = false)
     private String storeId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(nullable = false, name = "\"role\"", length = 20)
+    @Column(nullable = false, name = "role", length = 20)
     private String role;
 
 }

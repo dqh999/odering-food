@@ -1,5 +1,6 @@
 package com.scanmeally.domain.store.service;
 
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.StoreRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.StoreResponse;
 import com.scanmeally.domain.store.mapper.StoreMapper;
@@ -21,10 +22,11 @@ public class StoreService {
     private final StoreMapper storeMapper;
     private final StoreRepository storeRepository;
 
-    public Page<StoreResponse> findAllByBrand(String brandId,int page, int pageSize) {
+    public PageResponse<StoreResponse> findAllByBrand(String brandId,int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
         final Page<Store> stores = storeRepository.findAllByBrandId(brandId,pageable);
-        return stores.map(storeMapper::toResponse);
+        var response =  stores.map(storeMapper::toResponse);
+        return PageResponse.build(response);
     }
 
     public StoreResponse get(final String id) {

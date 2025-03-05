@@ -24,21 +24,22 @@ create table brands
 
 create table stores
 (
-    id         varchar(45) primary key,
-    brand_id   varchar(45)  not null,
-    name       varchar(255) not null,
-    address    TEXT         not null,
-    phone      varchar(20),
-    created_at timestamp,
-    updated_at timestamp
+    id               varchar(45) primary key,
+    brand_id         varchar(45)  not null,
+    name             varchar(255) not null,
+    address          TEXT         not null,
+    phone            varchar(20),
+    tax_rate         decimal(5, 2) default 10.00,
+    service_fee_rate decimal(5, 2) default 0.00,
+    created_at       timestamp,
+    updated_at       timestamp
 );
-
-create table store_staffs
+create table store_staff
 (
     id         varchar(45) primary key,
     store_id   varchar(45) not null,
     user_id    varchar(45) not null,
-    role       varchar(20) not null, -- 'waiter', 'chef', 'cashier', 'manager'
+    role       varchar(20) not null,
     created_at timestamp,
     updated_at timestamp
 );
@@ -48,14 +49,15 @@ create table store_tables
     id           varchar(45) primary key,
     store_id     varchar(45) not null,
     table_number varchar(20) not null,
-    status       varchar(20) DEFAULT 'available',
+    available    BOOLEAN DEFAULT TRUE,
     created_at   timestamp,
     updated_at   timestamp
 );
 
-create table categories
+create table brand_categories
 (
     id          varchar(45) primary key,
+    brand_id    varchar(45)  not null,
     name        varchar(255) not null,
     description varchar(255),
     created_at  timestamp,
@@ -65,7 +67,7 @@ create table categories
 create table menu_items
 (
     id          varchar(45) primary key,
-    store_id    varchar(45)    not null,
+    brand_id    varchar(45)    not null,
     category_id varchar(45)    not null,
     name        varchar(255)   not null,
     description TEXT,
@@ -75,17 +77,33 @@ create table menu_items
     created_at  timestamp,
     updated_at  timestamp
 );
+create table store_menu_items
+(
+    id         varchar(45) primary key,
+    store_id   varchar(45) not null,
+    item_id    varchar(45) not null,
+    available  BOOLEAN DEFAULT TRUE,
+    created_at timestamp,
+    updated_at timestamp
+);
 
 create table orders
 (
-    id          varchar(45) primary key,
-    store_id    varchar(45)    not null,
-    table_id    varchar(45)    not null,
-    user_id     varchar(45),                   -- Có thể null nếu khách không đăng nhập
-    status      varchar(20) DEFAULT 'pending', -- 'pending', 'preparing', 'completed', 'cancelled'
-    total_price DECIMAL(10, 2) not null,
-    created_at  timestamp,
-    updated_at  timestamp
+    id               varchar(45) primary key,
+    store_id         varchar(45)    not null,
+    table_id         varchar(45)    not null,
+    user_id          varchar(45),
+    sub_total        DECIMAL(10, 2),
+    tax_rate         int,
+    tax              DECIMAL(10, 2),
+    service_fee_rate int,
+    service_fee      decimal(10, 2),
+    shipping_fee     DECIMAL(10, 2),
+    discount         DECIMAL(10, 2),
+    total_price      DECIMAL(10, 2) not null,
+    status           varchar(20) DEFAULT 'pending',
+    created_at       timestamp,
+    updated_at       timestamp
 );
 
 create table order_items
@@ -99,24 +117,15 @@ create table order_items
     updated_at   timestamp
 );
 
-create table payments
+create table order_status_history
 (
-    id             varchar(45) primary key,
-    order_id       varchar(45) not null,
-    payment_method varchar(20) not null,          -- 'cash', 'credit_card', 'momo', 'vn_pay'
-    status         varchar(20) DEFAULT 'pending', -- 'pending', 'paid', 'failed'
-    paid_at        timestamp NULL,
-    created_at     timestamp,
-    updated_at     timestamp
+    id            varchar(45) primary key,
+    order_id      varchar(45) not null,
+    status        varchar(20) not null,
+    changed_at    timestamp   not null,
+    changed_by_id varchar(45),
+    reason        varchar(255),
+    created_at    timestamp,
+    updated_at    timestamp
 );
 
-create table reviews
-(
-    id         varchar(45) primary key,
-    user_id    varchar(45) not null,
-    store_id   varchar(45) not null,
-    rating     INT CHECK (rating BETWEEN 1 AND 5),
-    comment    TEXT,
-    created_at timestamp,
-    updated_at timestamp
-);

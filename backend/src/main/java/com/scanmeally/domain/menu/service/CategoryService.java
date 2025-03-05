@@ -1,5 +1,6 @@
 package com.scanmeally.domain.menu.service;
 
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.menu.dataTransferObject.request.CategoryRequest;
 import com.scanmeally.domain.menu.dataTransferObject.request.CategoryUpdateRequest;
 import com.scanmeally.domain.menu.dataTransferObject.response.CategoryResponse;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +26,16 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
 
+    public List<CategoryResponse> findAllByStoreId(final String storeId) {
+        return categoryRepository.findAllByStoreId(storeId)
+                .stream().map(categoryMapper::toResponse).collect(Collectors.toList());
+    }
 
-    public Page<CategoryResponse> findAll(int page, int pageSize) {
+    public PageResponse<CategoryResponse> findAll(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
         final Page<Category> categories = categoryRepository.findAll(pageable);
-        return categories.map(categoryMapper::toResponse);
+        var response = categories.map(categoryMapper::toResponse);
+        return PageResponse.build(response);
     }
 
     public CategoryResponse get(final String id) {

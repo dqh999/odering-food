@@ -1,6 +1,6 @@
 package com.scanmeally.api.menu;
 
-import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.menu.dataTransferObject.request.CategoryRequest;
 import com.scanmeally.domain.menu.dataTransferObject.request.CategoryUpdateRequest;
@@ -28,16 +28,7 @@ public class CategoryResource {
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
         final var response = categoryService.findAll(page, pageSize);
-        final PageResponse<CategoryResponse> pageResponse = PageResponse.<CategoryResponse>builder()
-                .totalElements((int) response.getTotalElements())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getNumber() + 1)
-                .pageSize(response.getSize())
-                .data(response.getContent())
-                .hasNext(response.hasNext())
-                .hasPrevious(response.hasPrevious())
-                .build();
-        return ApiResponse.<PageResponse<CategoryResponse>>build().withData(pageResponse).toEntity();
+        return ApiResponse.<PageResponse<CategoryResponse>>build().withData(response).toEntity();
     }
 
     @GetMapping("/{id}")

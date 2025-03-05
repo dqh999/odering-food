@@ -13,6 +13,7 @@ import com.scanmeally.domain.account.service.impl.GoogleOAuth2ServiceImpl;
 import com.scanmeally.infrastructure.exception.AppException;
 import com.scanmeally.infrastructure.exception.ResourceException;
 import com.scanmeally.infrastructure.service.CacheService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,6 +48,7 @@ public class AccountService {
     /**
      * Authenticate OAuth2 token and generate JWT tokens.
      */
+    @Transactional
     public AccountResponse oauth2Login(OAuth2LoginRequest request) {
         String loginType = request.getProvider().toLowerCase();
         if (!loginType.equals("google")) {
@@ -111,14 +113,17 @@ public class AccountService {
 
     public UserDetailDTO getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(AccountException.INVALID_CREDENTIALS);
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == "anonymousUser") {
+            return null;
         }
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userDetailDTO = cacheService.get(USER_CACHE_KEY + userDetails.getUsername(), UserDetailDTO.class);
         if (userDetailDTO.isPresent()) return userDetailDTO.get();
-        User existingUser = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
+        Optional<User> optionalUser = userRepository.findByEmail(userDetails.getUsername());
+        if (optionalUser.isEmpty()) {
+            return null;
+        }
+        User existingUser = optionalUser.get();
         return new UserDetailDTO(existingUser.getId(), existingUser.getRole().name(), existingUser.getFullName());
     }
 }

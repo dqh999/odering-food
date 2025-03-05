@@ -1,17 +1,9 @@
 package com.scanmeally.domain.order.dataTransferObject.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-@Getter
-@Setter
+@Data
 public class OrderRequest {
-    private String storeId;
-    private String tableId;
-    private String userId;
-    private BigDecimal totalPrice;
-    private List<OrderItemRequest> items;
+    private String userNotes;
+    private String paymentMethod;
 }

@@ -1,6 +1,6 @@
 package com.scanmeally.api.store;
 
-import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.BrandRequest;
 import com.scanmeally.domain.store.dataTransferObject.request.BrandUpdateRequest;
@@ -28,16 +28,7 @@ public class BrandResource {
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
         final var response = brandService.findAll(page, pageSize);
-        final PageResponse<BrandResponse> pageResponse = PageResponse.<BrandResponse>builder()
-                .totalElements((int) response.getTotalElements())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getNumber() + 1)
-                .pageSize(response.getSize())
-                .data(response.getContent())
-                .hasNext(response.hasNext())
-                .hasPrevious(response.hasPrevious())
-                .build();
-        return ApiResponse.<PageResponse<BrandResponse>>build().withData(pageResponse).toEntity();
+        return ApiResponse.<PageResponse<BrandResponse>>build().withData(response).toEntity();
     }
 
     @GetMapping("/{id}")

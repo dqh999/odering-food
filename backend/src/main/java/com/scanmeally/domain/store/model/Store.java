@@ -19,7 +19,7 @@ public class Store  extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "brand_id", nullable = false)
     private String brandId;
 
     @Column(nullable = false)

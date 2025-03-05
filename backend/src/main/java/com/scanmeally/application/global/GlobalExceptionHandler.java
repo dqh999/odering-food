@@ -14,10 +14,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<?>> handleAppException(AppException e) {
-        return handleException(e.getExceptionCode());
+        return handleException(e.getExceptionCode(), e.getMessage());
     }
 
-    private ResponseEntity<ApiResponse<?>> handleException(ExceptionCode e) {
+    private ResponseEntity<ApiResponse<?>> handleException(ExceptionCode e, String message) {
         Map<String, Object> errors = new HashMap<>();
         errors.put("type", e != null ? e.getType() : HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         HttpStatus status = HttpStatus.resolve(e != null ? e.getCode() : HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         ApiResponse<?> errorResponse = ApiResponse.<Void>build()
                 .withCode(status.value())
                 .withErrors(errors)
-                .withMessage(e != null ? e.getMessage() : null);
+                .withMessage(message != null ? message : e != null ? e.getMessage() : "");
         return ResponseEntity.status(status).body(errorResponse);
     }
 

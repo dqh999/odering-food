@@ -1,9 +1,10 @@
 package com.scanmeally.api.order;
 
-import com.scanmeally.application.dataTransferObject.PageResponse;
-import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
+import com.scanmeally.infrastructure.util.PageResponse;
+import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.order.dataTransferObject.response.OrderResponse;
+import com.scanmeally.domain.order.model.OrderStatus;
 import com.scanmeally.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +17,23 @@ public class OrderResource {
 
     private final OrderService orderService;
 
+    @PostMapping("/checkout/{tableId}")
+    public ResponseEntity<ApiResponse<OrderResponse>> checkout(
+            @PathVariable String tableId,
+            @RequestBody OrderRequest request
+    ) {
+        var response = orderService.checkout(tableId, request);
+        return ApiResponse.<OrderResponse>build().withData(response).toEntity();
+    }
+
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrders(
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrdersByStore(
             @RequestParam(name = "storeId") String storeId,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
-        final var response = orderService.findAllByStoreId(storeId,page, pageSize);
-        final PageResponse<OrderResponse> pageResponse = PageResponse.<OrderResponse>builder()
-                .totalElements((int) response.getTotalElements())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getNumber() + 1)
-                .pageSize(response.getSize())
-                .data(response.getContent())
-                .hasNext(response.hasNext())
-                .hasPrevious(response.hasPrevious())
-                .build();
-        return ApiResponse.<PageResponse<OrderResponse>>build().withData(pageResponse).toEntity();
+        final var response = orderService.getAllOrdersByStore(storeId, page, pageSize);
+        return ApiResponse.<PageResponse<OrderResponse>>build().withData(response).toEntity();
     }
 
     @GetMapping("/{id}")
@@ -41,16 +42,13 @@ public class OrderResource {
         return ApiResponse.<OrderResponse>build().withData(response).toEntity();
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest orderRequest) {
-        final var response = orderService.create(orderRequest);
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<OrderResponse>> updateOrderStatus(
+            @PathVariable String id,
+            @RequestParam OrderStatus status
+    ) {
+        var response = orderService.updateOrderStatus(id, status);
         return ApiResponse.<OrderResponse>build().withData(response).toEntity();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<OrderResponse>> updateOrder(@PathVariable String id, @RequestBody OrderRequest orderRequest) {
-        orderService.update(id, orderRequest);
-        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

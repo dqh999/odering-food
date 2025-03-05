@@ -1,19 +1,14 @@
 package com.scanmeally.api.store;
 
-import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
-import com.scanmeally.domain.store.dataTransferObject.StoreDTO;
 import com.scanmeally.domain.store.dataTransferObject.request.StoreRequest;
-import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
 import com.scanmeally.domain.store.dataTransferObject.response.StoreResponse;
 import com.scanmeally.domain.store.service.StoreService;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -33,16 +28,7 @@ public class StoreResource {
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
         final var response = storeService.findAllByBrand(brandId,page, pageSize);
-        final PageResponse<StoreResponse> pageResponse = PageResponse.<StoreResponse>builder()
-                .totalElements((int) response.getTotalElements())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getNumber() + 1)
-                .pageSize(response.getSize())
-                .data(response.getContent())
-                .hasNext(response.hasNext())
-                .hasPrevious(response.hasPrevious())
-                .build();
-        return ApiResponse.<PageResponse<StoreResponse>>build().withData(pageResponse).toEntity();
+        return ApiResponse.<PageResponse<StoreResponse>>build().withData(response).toEntity();
     }
 
     @GetMapping("/{id}")

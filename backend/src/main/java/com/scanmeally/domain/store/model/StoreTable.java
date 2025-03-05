@@ -17,12 +17,12 @@ public class StoreTable extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "store_id", nullable = false)
     private String storeId;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "table_number", nullable = false, length = 20)
     private String tableNumber;
 
-    @Column(length = 20)
-    private String status;
+    @Column
+    private Boolean available;
 }

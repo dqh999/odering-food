@@ -1,5 +1,6 @@
 package com.scanmeally.domain.store.service;
 
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.BrandRequest;
 import com.scanmeally.domain.store.dataTransferObject.request.BrandUpdateRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
@@ -22,10 +23,11 @@ public class BrandService {
     private final BrandMapper brandMapper;
     private final BrandRepository brandRepository;
 
-    public Page<BrandResponse> findAll(int page, int pageSize) {
+    public PageResponse<BrandResponse> findAll(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page-1, pageSize, Sort.Direction.DESC, "id");
         final Page<Brand> brands = brandRepository.findAll(pageable);
-        return brands.map(brandMapper::toResponse);
+        var response = brands.map(brandMapper::toResponse);
+        return PageResponse.build(response);
     }
 
     public BrandResponse get(final String id) {

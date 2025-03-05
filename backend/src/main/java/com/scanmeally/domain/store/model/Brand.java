@@ -22,7 +22,7 @@ public class Brand  extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
 }

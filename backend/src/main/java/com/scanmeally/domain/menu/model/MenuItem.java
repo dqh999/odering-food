@@ -13,17 +13,17 @@ import java.time.OffsetDateTime;
 @Table(name = "menu_items")
 @Getter
 @Setter
-public class MenuItem  extends BaseEntity {
+public class MenuItem extends BaseEntity {
 
     @Id
-    @Column(nullable = false, updatable = false,length = 45)
+    @Column(nullable = false, updatable = false, length = 45)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "store_id", nullable = false)
     private String storeId;
 
-    @Column(nullable = false)
+    @Column(name = "category_id", nullable = false)
     private String categoryId;
 
     @Column(nullable = false)

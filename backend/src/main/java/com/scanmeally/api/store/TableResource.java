@@ -1,6 +1,6 @@
 package com.scanmeally.api.store;
 
-import com.scanmeally.application.dataTransferObject.PageResponse;
+import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.TableRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.TableResponse;
@@ -29,16 +29,7 @@ public class TableResource {
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
         final var response = tableService.findAllByStoreId(storeId, page, pageSize);
-        final PageResponse<TableResponse> pageResponse = PageResponse.<TableResponse>builder()
-                .totalElements((int) response.getTotalElements())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getNumber() + 1)
-                .pageSize(response.getSize())
-                .data(response.getContent())
-                .hasNext(response.hasNext())
-                .hasPrevious(response.hasPrevious())
-                .build();
-        return ApiResponse.<PageResponse<TableResponse>>build().withData(pageResponse).toEntity();
+        return ApiResponse.<PageResponse<TableResponse>>build().withData(response).toEntity();
     }
 
     @GetMapping("/{id}")

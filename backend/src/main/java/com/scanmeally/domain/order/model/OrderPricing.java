@@ -14,17 +14,17 @@ import java.math.BigDecimal;
 @Builder
 public class OrderPricing {
     @Column(name = "sub_total")
-    private BigDecimal subtotal = BigDecimal.ZERO;
+    private BigDecimal subtotal;
     @Column(name = "tax_rate")
-    private Integer taxRate = 0;
-    private BigDecimal tax = BigDecimal.ZERO;
+    private Integer taxRate;
+    private BigDecimal tax;
     @Column(name = "service_fee_rate")
-    private Integer serviceFeeRate = 0;
+    private Integer serviceFeeRate;
     @Column(name = "service_fee")
-    private BigDecimal serviceFee = BigDecimal.ZERO;
+    private BigDecimal serviceFee;
     @Column(name = "shipping_fee")
-    private BigDecimal shippingFee = BigDecimal.ZERO;
-    private BigDecimal discount = BigDecimal.ZERO;
+    private BigDecimal shippingFee;
+    private BigDecimal discount;
     @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalPrice;
 }

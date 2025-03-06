@@ -5,6 +5,7 @@ import com.scanmeally.domain.account.dataTransferObject.request.OAuth2LoginReque
 import com.scanmeally.domain.account.dataTransferObject.response.AccountResponse;
 import com.scanmeally.domain.account.dataTransferObject.response.OAuth2UrlResponse;
 import com.scanmeally.domain.account.service.AccountService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
+@Tag(name = "Account API")
 public class AccountResource {
     private final AccountService accountService;
 

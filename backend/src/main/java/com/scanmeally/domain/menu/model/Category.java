@@ -18,6 +18,7 @@ public class Category  extends BaseEntity {
     private String id;
     @Column(name = "brand_id")
     private String brandId;
+    private String type;
     @Column(nullable = false)
     private String name;
     private String description;

@@ -22,11 +22,15 @@ public class StoreService {
     private final StoreMapper storeMapper;
     private final StoreRepository storeRepository;
 
-    public PageResponse<StoreResponse> findAllByBrand(String brandId,int page, int pageSize) {
+    public PageResponse<StoreResponse> findAllByBrand(String brandId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
-        final Page<Store> stores = storeRepository.findAllByBrandId(brandId,pageable);
-        var response =  stores.map(storeMapper::toResponse);
+        final Page<Store> stores = storeRepository.findAllByBrandId(brandId, pageable);
+        var response = stores.map(storeMapper::toResponse);
         return PageResponse.build(response);
+    }
+
+    public boolean isTableAvailable(String storeId, String tableId) {
+        return storeRepository.existsByStoreIdAndTableIdAndAvailable(storeId, tableId);
     }
 
     public StoreResponse get(final String id) {

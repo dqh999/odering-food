@@ -35,6 +35,7 @@ public class Order extends BaseEntity {
     private String userNotes;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @Embedded

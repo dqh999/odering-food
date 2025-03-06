@@ -14,9 +14,11 @@ import com.scanmeally.domain.menu.model.MenuItem;
 import com.scanmeally.domain.menu.repository.MenuItemRepository;
 import com.scanmeally.infrastructure.exception.AppException;
 import com.scanmeally.infrastructure.exception.ResourceException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,7 +40,7 @@ public class MenuService {
         var response = menuItemRepository.findByCategoryId(existingCategoryId, pageable)
                 .map(menuMapper::toResponse);
         final PageResponse<MenuItemResponse> pageResponse = PageResponse.build(response);
-        return new MenuResponse(storeId,categoryResponses,null, pageResponse);
+        return new MenuResponse(storeId, categoryResponses, null, pageResponse);
     }
 
     public PageResponse<MenuItemResponse> search(final String storeId, final SearchMenuRequest request) {
@@ -49,9 +51,9 @@ public class MenuService {
     }
 
     public MenuItemResponse get(final String id) {
-        return menuItemRepository.findById(id)
-                .map(menuMapper::toResponse)
+        var result = menuItemRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
+        return menuMapper.toResponse(result);
     }
 
     public MenuItemResponse create(String storeId, final MenuItemRequest request) {
@@ -82,5 +84,18 @@ public class MenuService {
         BigDecimal price = (BigDecimal) row[0];
         Boolean available = (Boolean) row[1];
         return new MenuItemDTO(price, available);
+    }
+
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void updatePopularItems() {
+//        List<String> popularItemIds = orderRepository.findTopPopularItems(LocalDate.now().minusDays(1));
+//
+//        menuItemRepository.resetPopularItems();
+//
+//        if (!popularItemIds.isEmpty()) {
+//            menuItemRepository.markPopularItems(popularItemIds);
+//        }
     }
 }

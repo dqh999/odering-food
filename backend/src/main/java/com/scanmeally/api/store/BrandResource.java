@@ -7,6 +7,7 @@ import com.scanmeally.domain.store.dataTransferObject.request.BrandUpdateRequest
 import com.scanmeally.domain.store.dataTransferObject.response.BrandResponse;
 import com.scanmeally.domain.store.service.BrandService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/brand", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Brand API")
 public class BrandResource {
 
     private final BrandService brandService;

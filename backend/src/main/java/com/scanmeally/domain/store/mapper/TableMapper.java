@@ -7,8 +7,7 @@ import com.scanmeally.domain.store.model.StoreTable;
 import com.scanmeally.infrastructure.config.GlobalMapperConfig;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring",
-        config = GlobalMapperConfig.class)
+@Mapper(config = GlobalMapperConfig.class)
 public interface TableMapper {
     StoreTable toEntity(TableRequest request);
 

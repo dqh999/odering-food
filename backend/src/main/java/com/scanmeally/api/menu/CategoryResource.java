@@ -7,6 +7,7 @@ import com.scanmeally.domain.menu.dataTransferObject.request.CategoryUpdateReque
 import com.scanmeally.domain.menu.dataTransferObject.response.CategoryResponse;
 import com.scanmeally.domain.menu.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/category", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Category API")
 public class CategoryResource {
 
     private final CategoryService categoryService;

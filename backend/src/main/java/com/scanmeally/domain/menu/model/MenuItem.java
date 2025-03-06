@@ -35,9 +35,13 @@ public class MenuItem extends BaseEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url")
     private String imageURL;
 
+    @Column(name = "is_popular")
+    private Boolean isPopular;
+    @Column(name = "is_bestseller")
+    private Boolean isBestseller;
     @Column(columnDefinition = "tinyint", length = 1)
     private Boolean available;
 

@@ -1,6 +1,7 @@
 package com.scanmeally.domain.order.dataTransferObject.response;
 
 
+import com.scanmeally.domain.order.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,10 +13,11 @@ import java.util.Set;
 @Setter
 public class OrderResponse {
     private String id;
+    private String code;
     private String storeId;
     private String tableId;
     private String userId;
-    private String status;
+    private OrderStatus status;
     private BigDecimal totalPrice;
     private Set<OrderItemResponse> items;
     private LocalDateTime createdAt;

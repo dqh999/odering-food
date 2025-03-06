@@ -5,16 +5,12 @@ import com.scanmeally.domain.menu.dataTransferObject.request.MenuItemUpdateReque
 import com.scanmeally.domain.menu.dataTransferObject.response.MenuItemResponse;
 import com.scanmeally.domain.menu.model.MenuItem;
 import com.scanmeally.infrastructure.config.GlobalMapperConfig;
-import com.scanmeally.infrastructure.mapper.MapperEntity;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 
-@Mapper(componentModel = "spring",
-        config = GlobalMapperConfig.class)
-public interface MenuMapper extends MapperEntity<MenuItem, MenuItemRequest> {
+@Mapper(config = GlobalMapperConfig.class)
+public interface MenuMapper {
+    MenuItem toEntity(MenuItemRequest request);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(MenuItemUpdateRequest update, @MappingTarget MenuItem entity);
     MenuItemResponse toResponse(MenuItem entity);

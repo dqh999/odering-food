@@ -7,6 +7,7 @@ import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.order.dataTransferObject.response.OrderResponse;
 import com.scanmeally.domain.order.model.OrderStatus;
 import com.scanmeally.domain.order.service.OrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
+@Tag(name = "Order API")
 public class OrderResource {
 
     private final OrderService orderService;

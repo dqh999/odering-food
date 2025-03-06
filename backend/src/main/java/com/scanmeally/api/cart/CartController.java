@@ -4,7 +4,7 @@ import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.cart.Cart;
 import com.scanmeally.domain.cart.CartItemRequest;
 import com.scanmeally.domain.cart.CartService;
-import jakarta.servlet.http.HttpSession;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
+@Tag(name = "Cart API")
 public class CartController {
     private final CartService cartService;
 

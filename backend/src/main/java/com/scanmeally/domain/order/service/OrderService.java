@@ -1,10 +1,10 @@
 package com.scanmeally.domain.order.service;
 
 import com.scanmeally.domain.cart.CartItem;
-import com.scanmeally.domain.menu.service.MenuService;
 import com.scanmeally.domain.order.dataTransferObject.request.GetOrderRequest;
 import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
 import com.scanmeally.domain.order.mapper.OrderItemMapper;
+import com.scanmeally.infrastructure.service.CacheService;
 import com.scanmeally.infrastructure.util.OrderCodeGenerator;
 import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.cart.CartService;
@@ -27,21 +27,23 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final MenuService menuService;
     private final CartService cartService;
+    private final CacheService cacheService;
     private final WSService wsService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
-    private static final String STORE_ORDER_TOPIC = "/store/%s/order";
+    private static final String ORDER_TOPIC_CACHE = "order:id:";
+    private static final String STORE_ORDER_TOPIC_WS = "/store/%s/order";
 
     public PageResponse<OrderResponse> getAllOrdersByStore(final String storeId, final GetOrderRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getPageSize(), Sort.Direction.DESC, "createdAt");
@@ -93,7 +95,8 @@ public class OrderService {
             return mapped;
         }).collect(Collectors.toSet());
         orderResponse.setItems(orderItemResponse);
-        wsService.sendMessage(STORE_ORDER_TOPIC.formatted(cart.getStoreId()), orderResponse);
+        wsService.sendMessage(STORE_ORDER_TOPIC_WS.formatted(cart.getStoreId()), orderResponse);
+        cacheService.set(ORDER_TOPIC_CACHE + newOrder.getId(), orderResponse, Duration.ofHours(1));
         return orderResponse;
     }
 
@@ -101,16 +104,19 @@ public class OrderService {
     public OrderResponse updateOrderStatus(String orderId, OrderStatus newStatus) {
         String storeId = orderRepository.findStoreIdByOrderId(orderId)
                 .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
+        var orderInCache = cacheService.get(ORDER_TOPIC_CACHE + orderId, OrderResponse.class);
+        if (orderInCache.isEmpty()) {
+            throw new AppException(ResourceException.UNEXPECTED_ERROR);
+        }
+        var order = orderInCache.get();
         if (!order.getStatus().isValidTransition(newStatus)) {
             throw new AppException(OrderException.INVALID_ORDER_STATUS_TRANSITION);
         }
         order.setStatus(newStatus);
-        Order saved = orderRepository.save(order);
-        var response = orderMapper.toResponse(saved);
-        wsService.sendMessage(STORE_ORDER_TOPIC.formatted(storeId), response);
-        return response;
+        orderRepository.updateOrderStatus(orderId, newStatus);
+        wsService.sendMessage(STORE_ORDER_TOPIC_WS.formatted(storeId), order);
+        cacheService.set(ORDER_TOPIC_CACHE + order.getId(), order, Duration.ofHours(1));
+        return order;
     }
 
     public void delete(final String id) {

@@ -10,8 +10,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 
-@Mapper(componentModel = "spring",
-        config = GlobalMapperConfig.class)
+@Mapper(config = GlobalMapperConfig.class)
 public interface StoreMapper {
     Store toEntity(StoreRequest request);
     StoreResponse toResponse(Store store);

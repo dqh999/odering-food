@@ -43,7 +43,6 @@ create table store_staff
     created_at timestamp,
     updated_at timestamp
 );
-
 create table store_tables
 (
     id           varchar(45) primary key,
@@ -57,6 +56,7 @@ create table store_tables
 create table brand_categories
 (
     id          varchar(45) primary key,
+    type        varchar(45),
     brand_id    varchar(45)  not null,
     name        varchar(255) not null,
     description varchar(255),
@@ -66,16 +66,18 @@ create table brand_categories
 
 create table menu_items
 (
-    id          varchar(45) primary key,
-    brand_id    varchar(45)    not null,
-    category_id varchar(45)    not null,
-    name        varchar(255)   not null,
-    description TEXT,
-    price       DECIMAL(10, 2) not null,
-    image_url   varchar(500),
-    available   BOOLEAN DEFAULT TRUE,
-    created_at  timestamp,
-    updated_at  timestamp
+    id            varchar(45) primary key,
+    brand_id      varchar(45)    not null,
+    category_id   varchar(45)    not null,
+    name          varchar(255)   not null,
+    description   TEXT,
+    price         DECIMAL(10, 2) not null,
+    image_url     varchar(500),
+    is_popular    boolean default false,
+    is_bestseller boolean default false,
+    available     boolean default true,
+    created_at    timestamp,
+    updated_at    timestamp
 );
 create table store_menu_items
 (
@@ -86,7 +88,6 @@ create table store_menu_items
     created_at timestamp,
     updated_at timestamp
 );
-
 create table orders
 (
     id               varchar(45) primary key,
@@ -94,7 +95,7 @@ create table orders
     store_id         varchar(45)    not null,
     table_id         varchar(45)    not null,
     user_id          varchar(45),
-    user_notes        varchar(255),
+    user_notes       varchar(255),
     sub_total        DECIMAL(10, 2),
     tax_rate         int,
     tax              DECIMAL(10, 2),

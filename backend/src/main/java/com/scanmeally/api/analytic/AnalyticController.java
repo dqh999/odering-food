@@ -5,6 +5,7 @@ import com.scanmeally.domain.analytic.dataTransferObject.request.AnalysisRequest
 import com.scanmeally.domain.analytic.service.AnalyticService;
 import com.scanmeally.domain.analytic.dataTransferObject.response.AnalysisResponse;
 import com.scanmeally.domain.analytic.dataTransferObject.response.OrderAnalysisResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/analytic")
 @RequiredArgsConstructor
+@Tag(name = "Analytic API")
 public class AnalyticController {
     private final AnalyticService analyticService;
 

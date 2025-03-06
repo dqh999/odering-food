@@ -1,7 +1,6 @@
 package com.scanmeally.application.global;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
@@ -27,14 +26,11 @@ public class ApiResponse<T> {
     private Date timestamp;
 
     public ApiResponse() {
-    }
-
-    @PostConstruct
-    private void init() {
         httpStatus = HttpStatus.OK;
         code = 200;
         isSuccess = true;
         errors = new HashMap<>();
+        timestamp = new Date();
     }
 
     public static <T> ApiResponse<T> build() {

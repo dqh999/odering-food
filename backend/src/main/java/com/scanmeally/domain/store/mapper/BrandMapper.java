@@ -11,8 +11,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 
-@Mapper(componentModel = "spring",
-        config = GlobalMapperConfig.class)
+@Mapper(config = GlobalMapperConfig.class)
 public interface BrandMapper {
     Brand toEntity(BrandRequest request);
     BrandResponse toResponse(Brand brand);

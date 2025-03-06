@@ -10,12 +10,14 @@ import com.scanmeally.domain.menu.dataTransferObject.response.MenuItemResponse;
 import com.scanmeally.domain.menu.dataTransferObject.response.MenuResponse;
 import com.scanmeally.domain.menu.service.MenuService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/menu", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Menu API")
 public class MenuResource {
 
     private final MenuService menuService;
@@ -23,7 +25,6 @@ public class MenuResource {
     public MenuResource(final MenuService menuService) {
         this.menuService = menuService;
     }
-
 
     @GetMapping("/store/{storeId}/search")
     public ResponseEntity<ApiResponse<PageResponse<MenuItemResponse>>> searchMenu(

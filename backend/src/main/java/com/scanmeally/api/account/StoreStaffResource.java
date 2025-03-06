@@ -3,6 +3,7 @@ package com.scanmeally.api.account;
 import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.account.dataTransferObject.StoreStaffDTO;
 import com.scanmeally.domain.account.service.StoreStaffService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/storeStaffs", produces = "application/json")
 @RequiredArgsConstructor
+@Tag(name = "Store Staff API")
 public class StoreStaffResource {
 
     private final StoreStaffService storeStaffService;

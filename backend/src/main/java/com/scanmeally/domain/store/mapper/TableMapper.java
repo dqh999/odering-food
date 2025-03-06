@@ -1,6 +1,6 @@
 package com.scanmeally.domain.store.mapper;
 
-import com.scanmeally.domain.store.dataTransferObject.StoreTableDTO;
+import com.scanmeally.domain.store.dataTransferObject.OrderStoreTableDTO;
 import com.scanmeally.domain.store.dataTransferObject.request.TableRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.TableResponse;
 import com.scanmeally.domain.store.model.StoreTable;
@@ -16,6 +16,6 @@ public interface TableMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(@MappingTarget StoreTable entity, TableRequest update);
 
-    TableResponse toResponseWithDTO(StoreTableDTO tableDTO);
+    TableResponse toResponseWithDTO(OrderStoreTableDTO tableDTO);
 
 }

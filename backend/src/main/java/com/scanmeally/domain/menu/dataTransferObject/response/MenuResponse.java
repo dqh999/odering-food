@@ -10,6 +10,6 @@ import java.util.List;
 public class MenuResponse {
     private String storeId;
     private List<CategoryResponse> categories;
-    private List<MenuItemResponse> bestSeller;
+    private List<MenuItemResponse> bestSellers;
     private PageResponse<MenuItemResponse> menuItems;
 }

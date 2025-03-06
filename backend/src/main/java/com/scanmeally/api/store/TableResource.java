@@ -4,7 +4,7 @@ import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.TableRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.TableResponse;
-import com.scanmeally.domain.store.service.TableService;
+import com.scanmeally.domain.store.service.StoreTableService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Table API", description = "Manage restaurant tables")
 public class TableResource {
 
-    private final TableService tableService;
+    private final StoreTableService tableService;
 
-    public TableResource(final TableService tableService) {
+    public TableResource(final StoreTableService tableService) {
         this.tableService = tableService;
     }
 

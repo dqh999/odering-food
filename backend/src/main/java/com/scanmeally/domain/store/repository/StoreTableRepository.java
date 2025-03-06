@@ -1,5 +1,6 @@
 package com.scanmeally.domain.store.repository;
 
+import com.scanmeally.domain.store.dataTransferObject.OrderStoreTableDTO;
 import com.scanmeally.domain.store.dataTransferObject.StoreTableDTO;
 import com.scanmeally.domain.store.model.StoreTable;
 import org.springframework.data.domain.Page;
@@ -14,15 +15,21 @@ public interface StoreTableRepository extends JpaRepository<StoreTable, String> 
     @Query("SELECT t.storeId, t.available FROM StoreTable t WHERE t.id = :tableId")
     Optional<Object[]> findStoreIdByTableId(@Param("tableId") String tableId);
 
+    @Query("select new com.scanmeally.domain.store.dataTransferObject.StoreTableDTO(" +
+            "st.id, st.tableNumber" +
+            ") from StoreTable st " +
+            "where st.id = :id")
+    Optional<StoreTableDTO> findStoreTableDTOById(@Param("id") String id);
+
     @Query("""
-                SELECT new com.scanmeally.domain.store.dataTransferObject.StoreTableDTO(
+                SELECT new com.scanmeally.domain.store.dataTransferObject.OrderStoreTableDTO(
                     t.id, t.tableNumber, t.available,o.status, o.code
                 )
                 FROM StoreTable t
                 LEFT JOIN Order o ON t.id = o.tableId
                 WHERE t.storeId = :storeId
             """)
-    Page<StoreTableDTO> findAllByStoreId(
+    Page<OrderStoreTableDTO> findAllByStoreId(
             @Param("storeId") String storeId,
             Pageable pageable
     );

@@ -3,7 +3,7 @@ package com.scanmeally.domain.cart;
 import com.scanmeally.domain.account.service.AccountService;
 import com.scanmeally.domain.menu.service.MenuService;
 import com.scanmeally.domain.order.model.OrderPricing;
-import com.scanmeally.domain.store.service.TableService;
+import com.scanmeally.domain.store.service.StoreTableService;
 import com.scanmeally.infrastructure.exception.AppException;
 import com.scanmeally.infrastructure.exception.ResourceException;
 import com.scanmeally.infrastructure.service.CacheService;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartService {
     private final MenuService menuService;
-    private final TableService tableService;
+    private final StoreTableService tableService;
     private final AccountService accountService;
     private final CacheService cacheService;
     private final SessionService sessionService;

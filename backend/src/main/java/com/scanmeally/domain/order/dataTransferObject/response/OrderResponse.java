@@ -2,6 +2,7 @@ package com.scanmeally.domain.order.dataTransferObject.response;
 
 
 import com.scanmeally.domain.order.model.OrderStatus;
+import com.scanmeally.domain.store.dataTransferObject.StoreTableDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class OrderResponse {
     private String id;
     private String code;
     private String storeId;
-    private String tableId;
+    private StoreTableDTO table;
     private String userId;
     private OrderStatus status;
     private BigDecimal totalPrice;

@@ -1,5 +1,6 @@
 package com.scanmeally.domain.store.service;
 
+import com.scanmeally.domain.store.dataTransferObject.OrderStoreTableDTO;
 import com.scanmeally.domain.store.dataTransferObject.StoreTableDTO;
 import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.TableRequest;
@@ -22,19 +23,24 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class TableService {
+public class StoreTableService {
     private final TableMapper tableMapper;
     private final StoreTableRepository storeTableRepository;
 
     public PageResponse<TableResponse> findAllByStoreId(String storeId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
-        final Page<StoreTableDTO> storeTables = storeTableRepository.findAllByStoreId(storeId, pageable);
+        final Page<OrderStoreTableDTO> storeTables = storeTableRepository.findAllByStoreId(storeId, pageable);
         var response = storeTables.map(dto -> {
             TableResponse tableResponse = tableMapper.toResponseWithDTO(dto);
             tableResponse.setStatus(resolveStatus(dto));
             return tableResponse;
         });
         return PageResponse.build(response);
+    }
+
+    public StoreTableDTO getStoreTableDTO(final String id) {
+        return storeTableRepository.findStoreTableDTOById(id)
+                .orElseThrow(() -> new AppException(ResourceException.ENTITY_NOT_FOUND));
     }
 
     public TableResponse get(final String id) {
@@ -76,7 +82,7 @@ public class TableService {
         storeTableRepository.deleteById(id);
     }
 
-    private String resolveStatus(StoreTableDTO tableDTO) {
+    private String resolveStatus(OrderStoreTableDTO tableDTO) {
         if (tableDTO.getOrderStatus() != null) {
             return tableDTO.getOrderStatus().name();
         }

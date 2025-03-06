@@ -4,6 +4,7 @@ import com.scanmeally.domain.cart.CartItem;
 import com.scanmeally.domain.order.dataTransferObject.request.GetOrderRequest;
 import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
 import com.scanmeally.domain.order.mapper.OrderItemMapper;
+import com.scanmeally.domain.store.service.StoreTableService;
 import com.scanmeally.infrastructure.service.CacheService;
 import com.scanmeally.infrastructure.util.OrderCodeGenerator;
 import com.scanmeally.infrastructure.util.PageResponse;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
     private final CartService cartService;
+    private final StoreTableService storeTableService;
     private final CacheService cacheService;
     private final WSService wsService;
     private final OrderRepository orderRepository;
@@ -65,6 +67,7 @@ public class OrderService {
         if (cartItems.isEmpty()) {
             throw new AppException(ResourceException.UNEXPECTED_ERROR);
         }
+        var tableDTO = storeTableService.getStoreTableDTO(tableId);
         Order newOrder = Order.builder()
                 .userId(cart.getUserId())
                 .userNotes(request.getUserNotes())
@@ -86,6 +89,7 @@ public class OrderService {
         Order saved = orderRepository.save(newOrder);
         cartService.clear(tableId);
         var orderResponse = orderMapper.toResponse(saved);
+        orderResponse.setTable(tableDTO);
         var orderItemResponse = orderItems.stream().map(orderItem -> {
             var mapped = orderItemMapper.toResponse(orderItem);
             var menuItemName = cartItems.stream()

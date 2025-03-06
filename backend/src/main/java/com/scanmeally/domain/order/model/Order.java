@@ -23,20 +23,22 @@ public class Order extends BaseEntity {
     @Column(nullable = false, updatable = false, length = 45)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    @Column(name = "code", nullable = false, length = 20, unique = true)
+    private String code;
 
     @Column(name = "table_id", nullable = false)
     private String tableId;
 
     @Column(name = "user_id")
     private String userId;
+    @Column(name = "user_notes")
+    private String userNotes;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @Embedded
     private OrderPricing pricing;
-    @Column(name = "user_notes", length = 500)
-    private String userNotes;
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;

@@ -1,5 +1,6 @@
 package com.scanmeally.api.order;
 
+import com.scanmeally.domain.order.dataTransferObject.request.GetOrderRequest;
 import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
 import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.application.global.ApiResponse;
@@ -18,7 +19,7 @@ public class OrderResource {
     private final OrderService orderService;
 
     @PostMapping("/checkout/{tableId}")
-    public ResponseEntity<ApiResponse<OrderResponse>> checkout(
+    public ResponseEntity<ApiResponse<OrderResponse>> checkoutOrder(
             @PathVariable String tableId,
             @RequestBody OrderRequest request
     ) {
@@ -26,13 +27,19 @@ public class OrderResource {
         return ApiResponse.<OrderResponse>build().withData(response).toEntity();
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrdersByStore(
-            @RequestParam(name = "storeId") String storeId,
+    @GetMapping("/search/{storeId}")
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> searchOrders(
+            @PathVariable String storeId,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "pageSie", defaultValue = "10") int pageSize
     ) {
-        final var response = orderService.getAllOrdersByStore(storeId, page, pageSize);
+        var request = new GetOrderRequest(
+                keyword,
+                page,
+                pageSize
+        );
+        final var response = orderService.getAllOrdersByStore(storeId, request);
         return ApiResponse.<PageResponse<OrderResponse>>build().withData(response).toEntity();
     }
 

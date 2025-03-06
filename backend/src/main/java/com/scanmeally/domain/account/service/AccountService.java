@@ -29,6 +29,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
+    private final StoreStaffService storeStaffService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final CacheService cacheService;

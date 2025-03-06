@@ -15,6 +15,7 @@ public class CartItem {
     private String id;
     private String cartId;
     private String menuItemId;
+    private String menuItemName;
     private int quantity;
     private BigDecimal price;
 }

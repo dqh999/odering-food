@@ -1,5 +1,6 @@
 package com.scanmeally.domain.store.service;
 
+import com.scanmeally.domain.store.dataTransferObject.StoreTableDTO;
 import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.store.dataTransferObject.request.TableRequest;
 import com.scanmeally.domain.store.dataTransferObject.response.TableResponse;
@@ -27,8 +28,12 @@ public class TableService {
 
     public PageResponse<TableResponse> findAllByStoreId(String storeId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "id");
-        final Page<StoreTable> storeTables = storeTableRepository.findAllByStoreId(storeId, pageable);
-        var response = storeTables.map(tableMapper::toResponse);
+        final Page<StoreTableDTO> storeTables = storeTableRepository.findAllByStoreId(storeId, pageable);
+        var response = storeTables.map(dto -> {
+            TableResponse tableResponse = tableMapper.toResponseWithDTO(dto);
+            tableResponse.setStatus(resolveStatus(dto));
+            return tableResponse;
+        });
         return PageResponse.build(response);
     }
 
@@ -71,5 +76,10 @@ public class TableService {
         storeTableRepository.deleteById(id);
     }
 
-
+    private String resolveStatus(StoreTableDTO tableDTO) {
+        if (tableDTO.getOrderStatus() != null) {
+            return tableDTO.getOrderStatus().name();
+        }
+        return Boolean.TRUE.equals(tableDTO.getAvailable()) ? "AVAILABLE" : "OCCUPIED";
+    }
 }

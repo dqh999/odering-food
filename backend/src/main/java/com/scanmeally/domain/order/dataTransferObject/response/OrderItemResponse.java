@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 public class OrderItemResponse {
     private String id;
     private String menuItemId;
+    private String menuItemName;
     private Integer quantity;
     private BigDecimal price;
 }

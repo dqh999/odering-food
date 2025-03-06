@@ -1,5 +1,7 @@
 package com.scanmeally.domain.order.model;
 
+import java.util.List;
+
 public enum OrderStatus {
     PENDING,           // Đơn hàng mới tạo, chưa xác nhận
     PAID,              // Thanh toán thành công
@@ -19,5 +21,14 @@ public enum OrderStatus {
             case READY -> newStatus == COMPLETED || newStatus == CANCELLED;
             default -> false;
         };
+    }
+
+    public static List<OrderStatus> getActiveStatuses() {
+        return List.of(
+                OrderStatus.PENDING,
+                OrderStatus.CONFIRMED,
+                OrderStatus.IN_PROGRESS,
+                OrderStatus.READY
+        );
     }
 }

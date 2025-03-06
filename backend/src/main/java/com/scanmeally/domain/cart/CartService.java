@@ -62,9 +62,11 @@ public class CartService {
         if (existingItem.isPresent()) {
             existingItem.get().setQuantity(existingItem.get().getQuantity() + request.getQuantity());
         } else {
+            var menuItem = menuService.get(request.getItemId());
             CartItem newItem = CartItem.builder()
                     .id(UUID.randomUUID().toString())
-                    .menuItemId(request.getItemId())
+                    .menuItemId(menuItem.getId())
+                    .menuItemName(menuItem.getName())
                     .quantity(request.getQuantity())
                     .build();
             items.add(newItem);

@@ -90,9 +90,11 @@ create table store_menu_items
 create table orders
 (
     id               varchar(45) primary key,
+    code             varchar(20),
     store_id         varchar(45)    not null,
     table_id         varchar(45)    not null,
     user_id          varchar(45),
+    user_notes        varchar(255),
     sub_total        DECIMAL(10, 2),
     tax_rate         int,
     tax              DECIMAL(10, 2),

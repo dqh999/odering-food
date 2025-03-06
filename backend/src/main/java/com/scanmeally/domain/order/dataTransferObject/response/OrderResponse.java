@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,5 +17,7 @@ public class OrderResponse {
     private String userId;
     private String status;
     private BigDecimal totalPrice;
-    private List<OrderItemResponse> items;
+    private Set<OrderItemResponse> items;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

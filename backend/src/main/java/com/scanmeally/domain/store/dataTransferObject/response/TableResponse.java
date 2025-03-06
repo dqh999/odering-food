@@ -1,9 +1,17 @@
 package com.scanmeally.domain.store.dataTransferObject.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TableResponse {
     private String id;
     private String tableNumber;
+    private String status;
+    private String currentOrderCode;
+
+    public String getStatus() {
+        return status;
+    }
 }

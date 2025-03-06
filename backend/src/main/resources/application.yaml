@@ -42,6 +42,10 @@ spring:
       access-expiration: 3600
       refresh-expiration: 86400
 
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME:dyny78iyx}
+    api-key: ${CLOUDINARY_API_KEY:543877478954974}
+    api-secret: ${CLOUDINARY_API_SECRET:dHG5Fj7afTk_MIHI4GOGqoLhFyY}
 
   openapi:
     service:

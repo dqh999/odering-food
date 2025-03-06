@@ -1,6 +1,11 @@
 package com.scanmeally.domain.order.service;
 
+import com.scanmeally.domain.cart.CartItem;
+import com.scanmeally.domain.menu.service.MenuService;
+import com.scanmeally.domain.order.dataTransferObject.request.GetOrderRequest;
 import com.scanmeally.domain.order.dataTransferObject.request.OrderRequest;
+import com.scanmeally.domain.order.mapper.OrderItemMapper;
+import com.scanmeally.infrastructure.util.OrderCodeGenerator;
 import com.scanmeally.infrastructure.util.PageResponse;
 import com.scanmeally.domain.cart.CartService;
 import com.scanmeally.domain.order.dataTransferObject.response.OrderResponse;
@@ -28,17 +33,18 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    private final MenuService menuService;
     private final CartService cartService;
     private final WSService wsService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
 
     private static final String STORE_ORDER_TOPIC = "/store/%s/order";
 
-
-    public PageResponse<OrderResponse> getAllOrdersByStore(final String storeId, final int page, final int pageSize) {
-        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, "createdAt");
+    public PageResponse<OrderResponse> getAllOrdersByStore(final String storeId, final GetOrderRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getPageSize(), Sort.Direction.DESC, "createdAt");
         Page<Order> orders = orderRepository.findAllOrdersByStoreId(storeId, pageable);
         var response = orders.map(orderMapper::toResponse);
         return PageResponse.build(response);
@@ -51,12 +57,16 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse checkout(final String tableId, OrderRequest request) {
+    public OrderResponse checkout(final String tableId, final OrderRequest request) {
         var cart = cartService.getCart(tableId);
-        if (cart.getCartItems().isEmpty()) {
+        var cartItems = cart.getCartItems();
+        if (cartItems.isEmpty()) {
             throw new AppException(ResourceException.UNEXPECTED_ERROR);
         }
         Order newOrder = Order.builder()
+                .userId(cart.getUserId())
+                .userNotes(request.getUserNotes())
+                .code(OrderCodeGenerator.generateOrderCode())
                 .tableId(cart.getTableId())
                 .pricing(cart.getPricing())
                 .userNotes(request.getUserNotes())
@@ -73,9 +83,18 @@ public class OrderService {
         newOrder.setOrderItems(orderItems);
         Order saved = orderRepository.save(newOrder);
         cartService.clear(tableId);
-        var response = orderMapper.toResponse(saved);
-        wsService.sendMessage(STORE_ORDER_TOPIC.formatted(cart.getStoreId()), response);
-        return response;
+        var orderResponse = orderMapper.toResponse(saved);
+        var orderItemResponse = orderItems.stream().map(orderItem -> {
+            var mapped = orderItemMapper.toResponse(orderItem);
+            var menuItemName = cartItems.stream()
+                    .filter(orderItem1 -> orderItem1.getMenuItemId().equals(mapped.getMenuItemId()))
+                    .findFirst().orElse(new CartItem()).getMenuItemName();
+            mapped.setMenuItemName(menuItemName);
+            return mapped;
+        }).collect(Collectors.toSet());
+        orderResponse.setItems(orderItemResponse);
+        wsService.sendMessage(STORE_ORDER_TOPIC.formatted(cart.getStoreId()), orderResponse);
+        return orderResponse;
     }
 
     @Transactional

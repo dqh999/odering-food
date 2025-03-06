@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation"
 import { Menu, ShoppingCart, User, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useCart } from "@/components/ordering/cart-provider"
+import { useCart } from "@/context/cart-provider"
 
-export function UserHeader() {
+export function Header() {
+    const { tableId } = useCart();
     const pathname = usePathname()
     const { items } = useCart()
     const [isScrolled, setIsScrolled] = useState(false)
@@ -75,7 +76,7 @@ export function UserHeader() {
                 </nav>
 
                 <div className="flex items-center gap-2">
-                    <Link href="/cart">
+                    <Link href={`/ordering/${tableId}/cart`}>
                         <Button variant="ghost" size="icon" className="relative">
                             <ShoppingCart className="h-5 w-5" />
                             {totalItems > 0 && (

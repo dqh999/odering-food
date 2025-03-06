@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { MenuItem } from "@/lib/types/menu"
 
 interface MenuItemFormProps {
   item?: any
@@ -18,15 +19,19 @@ interface MenuItemFormProps {
 }
 
 export function MenuItemForm({ item, onClose }: MenuItemFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<MenuItem>({
+    id: item?.id || "",
+    storeId: item?.storeId || "",
+    categoryId: item?.category || "",
     name: item?.name || "",
     description: item?.description || "",
     price: item?.price || "",
-    category: item?.category || "main",
+    isPopular: item?.isPopular || false,
+    isBestseller: item?.isBestseller || false,
     available: item?.available !== undefined ? item.available : true,
-    image: item?.image || "/placeholder.svg?height=200&width=200",
+    imageURL: item?.imageURL || "/placeholder.svg?height=200&width=200",
   })
-  const [imagePreview, setImagePreview] = useState(formData.image)
+  const [imagePreview, setImagePreview] = useState(formData.imageURL)
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,8 +50,6 @@ export function MenuItemForm({ item, onClose }: MenuItemFormProps) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // In a real app, you would upload this file to a server
-      // For now, we'll just create a local URL for preview
       const imageUrl = URL.createObjectURL(file)
       setImagePreview(imageUrl)
       setFormData((prev) => ({ ...prev, image: file }))
@@ -128,7 +131,7 @@ export function MenuItemForm({ item, onClose }: MenuItemFormProps) {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
-          <Select value={formData.category} onValueChange={handleSelectChange}>
+          <Select value={formData.categoryId} onValueChange={handleSelectChange}>
             <SelectTrigger id="category">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>

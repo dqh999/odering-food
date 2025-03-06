@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/context/auth-provider"
 
 interface SidebarProps {
   className?: string
@@ -24,6 +25,7 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
+  const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false)
 
   const routes = [
@@ -124,6 +126,7 @@ export function Sidebar({ className }: SidebarProps) {
             <Link
               href="/login"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
+              onClick={logout}
             >
               <LogOut className="h-5 w-5" />
               Logout

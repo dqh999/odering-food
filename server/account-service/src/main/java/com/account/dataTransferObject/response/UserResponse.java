@@ -1,0 +1,14 @@
+package com.account.domain.account.dataTransferObject.response;
+
+
+import com.account.domain.account.model.User;
+
+public record UserResponse(
+        String id,
+        String fullName,
+        String avatarUrl
+) {
+    public static UserResponse of(User user) {
+        return new UserResponse(user.getId(), user.getFullName(), user.getAvatarUrl());
+    }
+}

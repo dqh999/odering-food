@@ -31,7 +31,7 @@ services:
     networks:
       - qr-food-ordering-network
 
-  #  docker exec -it qr-food-ordering-redis redis-cli
+#  docker exec -it qr-food-ordering-redis redis-cli
 
   qr-food-ordering-mysql:
     container_name: qr-food-ordering-mysql

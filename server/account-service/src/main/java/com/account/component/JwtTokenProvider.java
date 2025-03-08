@@ -1,4 +1,4 @@
-package com.account.domain.account.component;
+package com.account.component;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;

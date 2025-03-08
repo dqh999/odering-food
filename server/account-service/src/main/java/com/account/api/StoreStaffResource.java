@@ -1,4 +1,4 @@
-package com.account.api.account;
+package com.account.api;
 
 import com.account.dataTransferObject.ApiResponse;
 import com.account.domain.account.dataTransferObject.StoreStaffDTO;

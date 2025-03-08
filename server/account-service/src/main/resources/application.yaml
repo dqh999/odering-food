@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: qr-food-ordering
+    name: account-service
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -1,4 +1,4 @@
-package com.account.infrastructure.config;
+package com.account.config;
 
 import com.account.component.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;

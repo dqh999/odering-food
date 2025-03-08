@@ -1,11 +1,11 @@
-package com.account.api.account;
+package com.account.api;
 
 import com.account.dataTransferObject.ApiResponse;
-import com.account.domain.account.dataTransferObject.request.LogoutRequest;
-import com.account.domain.account.dataTransferObject.request.OAuth2LoginRequest;
-import com.account.domain.account.dataTransferObject.request.RefreshTokenRequest;
-import com.account.domain.account.dataTransferObject.response.AccountResponse;
-import com.account.domain.account.dataTransferObject.response.OAuth2UrlResponse;
+import com.account.dataTransferObject.request.LogoutRequest;
+import com.account.dataTransferObject.request.OAuth2LoginRequest;
+import com.account.dataTransferObject.request.RefreshTokenRequest;
+import com.account.dataTransferObject.response.AccountResponse;
+import com.account.dataTransferObject.response.OAuth2UrlResponse;
 import com.account.domain.account.service.AccountService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.account.domain.account.dataTransferObject.response;
+package com.account.dataTransferObject.response;
 
 public record OAuth2UrlResponse (
      String providerName,

@@ -1,4 +1,4 @@
-package com.account.infrastructure.config;
+package com.account.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;

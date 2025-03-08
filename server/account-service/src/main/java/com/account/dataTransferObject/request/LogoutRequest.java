@@ -1,4 +1,4 @@
-package com.account.domain.account.dataTransferObject.request;
+package com.account.dataTransferObject.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

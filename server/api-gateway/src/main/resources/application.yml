@@ -1,0 +1,51 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: account-service
+          uri: https://auth-service-production-4f11.up.railway.app
+          predicates:
+            - Path=/api/account/**
+          filters:
+            - AuthFilter
+
+        - id: merchant-service
+          uri: https://user-service-production-b872.up.railway.app
+          predicates:
+            - Path=/api/merchant/**
+          filters:
+            - AuthFilter
+
+        - id: menu-service
+          uri: https://user-service-production-b872.up.railway.app
+          predicates:
+            - Path=/api/menu/**
+          filters:
+            - AuthFilter
+
+        - id: order-service
+          uri: https://user-service-production-b872.up.railway.app
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - AuthFilter
+
+        - id: notification-service
+          uri: https://user-service-production-b872.up.railway.app
+          predicates:
+            - Path=/api/notification/**
+          filters:
+            - AuthFilter
+
+        - id: analytics-service
+          uri: https://user-service-production-b872.up.railway.app
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - AuthFilter

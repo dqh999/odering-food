@@ -1,28 +1,44 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import "../assets/css/globals.css"
-import Providers from "./providers"
+import "./globals.css"
+import { CartProvider } from "@/lib/cart-context"
+import { AuthProvider } from "@/lib/auth-context"
+import { Toaster } from "@/components/ui/toaster"
+import { Header } from "@/components/header"
+import { CartBar } from "@/components/cart-bar"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Restaurant Order Management",
-  description: "A comprehensive restaurant order management system",
-  generator: 'v0.dev'
+  title: "Delicious Restaurant",
+  description: "Order delicious food online",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <AuthProvider>
+          <CartProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <CartBar />
+              <Toaster />
+            </div>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   )
 }
 
+
+
+import './globals.css'

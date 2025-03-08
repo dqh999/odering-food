@@ -1,4 +1,4 @@
-package com.account.infrastructure.config;
+package com.account.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

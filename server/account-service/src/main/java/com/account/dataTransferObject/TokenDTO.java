@@ -1,4 +1,4 @@
-package com.account.domain.account.dataTransferObject;
+package com.account.dataTransferObject;
 
 import java.util.Date;
 

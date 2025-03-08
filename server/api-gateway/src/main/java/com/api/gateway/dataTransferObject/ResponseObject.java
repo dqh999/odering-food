@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 public class ResponseObject {
     private HttpStatus status;
     private Object message;
-    private UserResponse data;
+    private InternalAuthResponse data;
 
-    public ResponseObject(HttpStatus status, Object message, UserResponse data) {
+    public ResponseObject(HttpStatus status, Object message, InternalAuthResponse data) {
         this.status = status;
         this.message = message;
         this.data = data;
@@ -28,11 +28,11 @@ public class ResponseObject {
         this.message = message;
     }
 
-    public UserResponse getData() {
+    public InternalAuthResponse getData() {
         return data;
     }
 
-    public void setData(UserResponse data) {
+    public void setData(InternalAuthResponse data) {
         this.data = data;
     }
 }

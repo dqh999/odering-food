@@ -6,7 +6,7 @@ import com.account.dataTransferObject.request.OAuth2LoginRequest;
 import com.account.dataTransferObject.request.RefreshTokenRequest;
 import com.account.dataTransferObject.response.AccountResponse;
 import com.account.dataTransferObject.response.OAuth2UrlResponse;
-import com.account.domain.account.service.AccountService;
+import com.account.service.AccountService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

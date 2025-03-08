@@ -1,4 +1,4 @@
-package com.account.domain.account.service.impl;
+package com.account.service.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,8 +1,8 @@
-package com.account.domain.account.service;
+package com.account.service;
 
-import com.account.domain.account.dataTransferObject.StoreStaffDTO;
-import com.account.domain.account.model.StoreStaff;
-import com.account.domain.account.repository.StoreStaffRepository;
+import com.account.dataTransferObject.StoreStaffDTO;
+import com.account.model.StoreStaff;
+import com.account.repository.StoreStaffRepository;
 import com.account.exception.AppException;
 import com.account.exception.ResourceException;
 import org.springframework.data.domain.Sort;

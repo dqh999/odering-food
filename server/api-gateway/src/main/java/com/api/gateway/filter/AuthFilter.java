@@ -30,19 +30,20 @@ public class AuthFilter extends AbstractGatewayFilterFactory<Object> {
 
             token = token.substring(7);
             return webClient.post()
-                    .uri("https://auth-service-production-4f11.up.railway.app/api/v1/auth/validateToken")
+                    .uri("https://localhost:8080/api/internal/auth")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .onStatus(status -> status.is4xxClientError(),
-                            _ -> Mono.error(new RuntimeException("Unauthorized")))                    .bodyToMono(ResponseObject.class)
+                            _ -> Mono.error(new RuntimeException("Unauthorized")))
+                    .bodyToMono(ResponseObject.class)
                     .flatMap(responseObject -> chain.filter(
-                                exchange.mutate()
-                                        .request(exchange.getRequest().mutate()
-                                                .header(X_USER_ID, responseObject.getData().getUserId().toString())
-                                                .header(X_ROLE_ID, responseObject.getData().getRoles().toString())
-                                                .build()
-                                        ).build()
-                        )
+                                    exchange.mutate()
+                                            .request(exchange.getRequest().mutate()
+                                                    .header(X_USER_ID, responseObject.getData().getUserId().toString())
+                                                    .header(X_ROLE_ID, responseObject.getData().getRoles().toString())
+                                                    .build()
+                                            ).build()
+                            )
                     );
         };
     }

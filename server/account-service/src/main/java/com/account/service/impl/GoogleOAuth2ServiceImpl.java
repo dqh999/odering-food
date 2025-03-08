@@ -1,4 +1,4 @@
-package com.account.domain.account.service.impl;
+package com.account.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,12 +6,12 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeReque
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.account.domain.account.dataTransferObject.response.OAuth2UrlResponse;
-import com.account.domain.account.exception.AccountException;
-import com.account.domain.account.model.LoginType;
-import com.account.domain.account.model.User;
-import com.account.domain.account.model.UserRole;
-import com.account.domain.account.service.OAuth2AuthService;
+import com.account.dataTransferObject.response.OAuth2UrlResponse;
+import com.account.exception.AccountException;
+import com.account.model.LoginType;
+import com.account.model.User;
+import com.account.model.UserRole;
+import com.account.service.OAuth2AuthService;
 import com.account.exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

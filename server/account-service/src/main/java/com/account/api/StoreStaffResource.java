@@ -1,8 +1,8 @@
 package com.account.api;
 
 import com.account.dataTransferObject.ApiResponse;
-import com.account.domain.account.dataTransferObject.StoreStaffDTO;
-import com.account.domain.account.service.StoreStaffService;
+import com.account.dataTransferObject.StoreStaffDTO;
+import com.account.service.StoreStaffService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

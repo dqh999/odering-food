@@ -1,4 +1,4 @@
-package com.account.domain.account.exception;
+package com.account.exception;
 
 import com.account.exception.ExceptionCode;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.account.component;
 
-import com.account.domain.account.service.AccountService;
+import com.account.service.AccountService;
 import com.account.exception.AppException;
 import com.account.exception.ResourceException;
 import jakarta.servlet.FilterChain;

@@ -1,6 +1,6 @@
-package com.account.domain.account.repository;
+package com.account.repository;
 
-import com.account.domain.account.model.User;
+import com.account.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

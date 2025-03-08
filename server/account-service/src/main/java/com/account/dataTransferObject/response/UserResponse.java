@@ -1,7 +1,7 @@
 package com.account.dataTransferObject.response;
 
 
-import com.account.domain.account.model.User;
+import com.account.model.User;
 
 public record UserResponse(
         String id,

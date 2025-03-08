@@ -1,8 +1,8 @@
 package com.account.dataTransferObject.response;
 
 
-import com.account.domain.account.dataTransferObject.TokenDTO;
-import com.account.domain.account.model.User;
+import com.account.dataTransferObject.TokenDTO;
+import com.account.model.User;
 
 public record AccountResponse(
         UserResponse user,

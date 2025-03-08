@@ -1,4 +1,3 @@
-
 FROM gradle:8.11.1-jdk23 AS build
 WORKDIR /app
 COPY . .

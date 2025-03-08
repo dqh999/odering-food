@@ -1,4 +1,4 @@
-package com.account.domain.account.model;
+package com.account.model;
 
 import com.account.util.BaseEntity;
 import jakarta.persistence.*;

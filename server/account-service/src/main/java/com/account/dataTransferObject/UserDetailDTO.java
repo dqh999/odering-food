@@ -1,8 +1,10 @@
-package com.account.domain.account.dataTransferObject;
+package com.account.dataTransferObject;
+
+import java.util.List;
 
 public record UserDetailDTO(
         String id,
-        String role,
+        List<String> roles,
         String userName
 ) {
 }

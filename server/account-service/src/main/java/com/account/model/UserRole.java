@@ -1,4 +1,4 @@
-package com.account.domain.account.model;
+package com.account.model;
 
 public enum UserRole {
     USER,

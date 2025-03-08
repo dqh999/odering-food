@@ -1,8 +1,8 @@
-package com.account.domain.account.service;
+package com.account.service;
 
-import com.account.domain.account.dataTransferObject.UserDTO;
-import com.account.domain.account.model.User;
-import com.account.domain.account.repository.UserRepository;
+import com.account.dataTransferObject.UserDTO;
+import com.account.model.User;
+import com.account.repository.UserRepository;
 import com.account.exception.AppException;
 import com.account.exception.ResourceException;
 import lombok.RequiredArgsConstructor;

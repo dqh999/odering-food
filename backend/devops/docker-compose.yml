@@ -1,0 +1,87 @@
+services:
+  qr-food-ordering-app:
+    container_name: qr-food-ordering-app
+    build: . .
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      kafka-broker-01:
+        condition: service_started
+    ports:
+      - "8084:8084"
+
+    networks:
+      - app-network
+      - db-network
+      - kafka-network
+
+  mongo-db:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Hop2005@
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - db-network
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-cache:
+    container_name: redis-cache
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - db-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:8.2.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Hop2005@
+      MYSQL_DATABASE: qr-food-ordering_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - db-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pHop2005@" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  redis-data:
+  mysql-data:
+  mongo-data:
+  zookeeper-01-data:
+  kafka-broker-01-data:
+
+networks:
+  app-network:
+    driver: bridge
+  db-network:
+    driver: bridge
+  kafka-network:
+    driver: bridge

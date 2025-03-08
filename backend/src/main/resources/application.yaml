@@ -1,0 +1,83 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: qr-food-ordering
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/${DB_NAME:qr-food-ordering_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Hop2005@}
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 6000
+
+    mongodb:
+      uri: "mongodb://root:Hop2005@mongo-db:27017/qr_food_ordering_db"
+      authentication-database: admin
+
+
+  kafka:
+    bootstrap-servers: kafka-broker-01:29092,localhost:29092
+    properties:
+      security.protocol: PLAINTEXT
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    admin:
+      properties:
+        retries: 3
+    topic:
+      order:
+        update: order.updates
+        delete: order.deleted
+
+    consumer-group:
+      order-analytics: oder-analytics-group
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID:943352489570-toir1d7gcuvt9jrhu6ahv9vej.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET:GOCSPX-aSj55W1-IspgXrerk0vmX}
+            redirect-uri: "${GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}"
+            scope: profile, email
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+    jwt:
+      secret-key: TaqlmGv1iEDMRiFp/pHuID1+T82fuA0xXh4GhiUI=
+      access-expiration: 3600
+      refresh-expiration: 86400
+
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME:dyn8iyx}
+    api-key: ${CLOUDINARY_API_KEY:5438754974}
+    api-secret: ${CLOUDINARY_API_SECRET:dHG5Fj7afTk_MhFyY}
+
+  openapi:
+    service:
+      api-docs: qr-food-ordering-server
+      server: http://localhost:8080,http://api.scanmeally.io
+      title: API Service
+      version: 1.0.0
